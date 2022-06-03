@@ -95,7 +95,7 @@
         };
 
         // Add Event dynamically om the navigation
-        function changeEditor (id, forceRender = false) {
+        function changeEditor (id, forceRender = "false") {
             const output = document.querySelector(".output");
             selectedEditor.off("focus", updateFocus);
             switch (id) {
@@ -115,10 +115,15 @@
                     swapChildren(id);
                     break;
                 case "previewOt":
-                    if (output && !forceRender) {
-                        output.style.visibility = "";
+                    if (forceRender === "true") {
+                        if (output) output.remove();
+                        updateDocument(forceRender);
                     } else {
-                        updateDocument();
+                        if (output) {
+                            output.style.visibility = "";
+                        } else {
+                            updateDocument(forceRender);
+                        }
                     }
                     break;
                 default:
@@ -135,6 +140,8 @@
                 // }
                 if (e && e.dataset && true === e.dataset.forceRender) {
                     child.dataset.forceRender = e.dataset.forceRender;
+                } else {
+                    child.dataset.forceRender = false
                 }
                 document.querySelector(".active").classList.remove("active");
                 this.classList.add("active");
@@ -333,12 +340,12 @@
         });
 
         // Preview the code that has written
-        function updateDocument (forceRender = false) {
+        function updateDocument (forceRender = "false") {
             var output = document.querySelector(".output");
             if (!output) {
                 output = document.createElement("iframe");
             } else {
-                if (isRendered && !forceRender) {
+                if (isRendered && forceRender === "false") {
                     output.style.visibility = ""
                     return
                 }
