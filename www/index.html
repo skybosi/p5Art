@@ -25,7 +25,14 @@
         <h2>loading...</h2>
     </div>
     <div class="preview">
-        <i style="color: white; transform: translateX(20%);" class="fas fa-caret-right"></i>
+        <svg style="color: white; transform: translateX(20%);" class="svg-inline--fa fa-caret-right fa-w-6"
+            aria-hidden="true" focusable="false" data-prefix="fas" data-icon="caret-right" role="img"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512" data-fa-i2svg="">
+            <path fill="currentColor"
+                d="M0 384.662V127.338c0-17.818 21.543-26.741 34.142-14.142l128.662 128.662c7.81 7.81 7.81 20.474 0 28.284L34.142 398.804C21.543 411.404 0 402.48 0 384.662z">
+            </path>
+        </svg>
+        <!-- <i style="color: white; transform: translateX(20%);" class="fas fa-caret-right"></i> Font Awesome fontawesome.com -->
     </div>
     <nav>
         <ul>
@@ -40,41 +47,145 @@
         <div id="editorCSS"></div>
         <div id="editorJS"></div>
     </div>
+    <div id="pickerShow" style="position: relative;z-index: 10;"></div>
     <div class="tools">
         <!-- line-1 -->
         <div class="tools-line button-line">
-            <button id="picker"><i class="fas fa-palette"></i></button>
-            <button id="moveUp"><i class="fas fa-arrow-to-top"></i></button>
-            <button id="moveDown"><i class="fas fa-arrow-to-bottom"></i></button>
-            <button id="copyLinesUp"><i class="fas fa-sort-size-up"></i></button>
+            <button id="picker">
+                <svg class="svg-inline--fa fa-palette fa-w-16" aria-hidden="true" focusable="false" data-prefix="fas"
+                    data-icon="palette" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                    data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M204.3 5C104.9 24.4 24.8 104.3 5.2 203.4c-37 187 131.7 326.4 258.8 306.7 41.2-6.4 61.4-54.6 42.5-91.7-23.1-45.4 9.9-98.4 60.9-98.4h79.7c35.8 0 64.8-29.6 64.9-65.3C511.5 97.1 368.1-26.9 204.3 5zM96 320c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm32-128c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128-64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128 64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z">
+                    </path>
+                </svg>
+            </button>
+            <button id="moveUp"><svg class="svg-inline--fa fa-arrow-to-top fa-w-12" aria-hidden="true" focusable="false"
+                    data-prefix="fas" data-icon="arrow-to-top" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 384 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M24 32h336c13.3 0 24 10.7 24 24v24c0 13.3-10.7 24-24 24H24C10.7 104 0 93.3 0 80V56c0-13.3 10.7-24 24-24zm66.4 280.5l65.6-65.6V456c0 13.3 10.7 24 24 24h24c13.3 0 24-10.7 24-24V246.9l65.6 65.6c9.4 9.4 24.6 9.4 33.9 0l17-17c9.4-9.4 9.4-24.6 0-33.9L209 126.1c-9.4-9.4-24.6-9.4-33.9 0L39.5 261.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0z">
+                    </path>
+                </svg><!-- <i class="fas fa-arrow-to-top"></i> Font Awesome fontawesome.com -->
+            </button>
+            <button id="moveDown"><svg class="svg-inline--fa fa-arrow-to-bottom fa-w-12" aria-hidden="true"
+                    focusable="false" data-prefix="fas" data-icon="arrow-to-bottom" role="img"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M360 480H24c-13.3 0-24-10.7-24-24v-24c0-13.3 10.7-24 24-24h336c13.3 0 24 10.7 24 24v24c0 13.3-10.7 24-24 24zm-66.4-280.5L228 265.1V56c0-13.3-10.7-24-24-24h-24c-13.3 0-24 10.7-24 24v209.1l-65.6-65.6c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L175 385.9c9.4 9.4 24.6 9.4 33.9 0l135.5-135.5c9.4-9.4 9.4-24.6 0-33.9l-17-17c-9.3-9.4-24.5-9.4-33.8 0z">
+                    </path>
+                </svg><!-- <i class="fas fa-arrow-to-bottom"></i> Font Awesome fontawesome.com -->
+            </button>
+            <button id="copyLinesUp"><svg class="svg-inline--fa fa-sort-size-up fa-w-16" aria-hidden="true"
+                    focusable="false" data-prefix="fas" data-icon="sort-size-up" role="img"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M107.31 36.69a16 16 0 0 0-22.62 0l-80 96C-5.35 142.74 1.77 160 16 160h48v304a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16V160h48c14.21 0 21.38-17.24 11.31-27.31zM484 32H284a28 28 0 0 0-28 28v168a28 28 0 0 0 28 28h200a28 28 0 0 0 28-28V60a28 28 0 0 0-28-28zm-56 288H276a20 20 0 0 0-20 20v120a20 20 0 0 0 20 20h152a20 20 0 0 0 20-20V340a20 20 0 0 0-20-20z">
+                    </path>
+                </svg><!-- <i class="fas fa-sort-size-up"></i> Font Awesome fontawesome.com -->
+            </button>
             <button id="copyLinesDown">
-                <i class="fas fa-sort-size-down"></i>
+                <svg class="svg-inline--fa fa-sort-size-down fa-w-16" aria-hidden="true" focusable="false"
+                    data-prefix="fas" data-icon="sort-size-down" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M428 320H276a20 20 0 0 0-20 20v120a20 20 0 0 0 20 20h152a20 20 0 0 0 20-20V340a20 20 0 0 0-20-20zm-252 32h-48V48a16 16 0 0 0-16-16H80a16 16 0 0 0-16 16v304H16c-14.19 0-21.37 17.24-11.29 27.31l80 96a16 16 0 0 0 22.62 0l80-96C197.35 369.26 190.22 352 176 352zM484 32H284a28 28 0 0 0-28 28v168a28 28 0 0 0 28 28h200a28 28 0 0 0 28-28V60a28 28 0 0 0-28-28z">
+                    </path>
+                </svg><!-- <i class="fas fa-sort-size-down"></i> Font Awesome fontawesome.com -->
             </button>
-            <button id="undo"><i class="fas fa-undo"></i></button>
-            <button id="redo"><i class="fas fa-redo"></i></button>
-            <button id="arrowUp"><i class="fas fa-arrow-up"></i></button>
-            <button id="arrowDown"><i class="fas fa-arrow-down"></i></button>
-            <button id="arrowLeft"><i class="fas fa-arrow-left"></i></button>
-            <button id="arrowRight"><i class="fas fa-arrow-right"></i></button>
-            <button id="search"><i class="fas fa-search"></i></button>
-            <button id="beautify"><i class="fas fa-code"></i></button>
+            <button id="undo"><svg class="svg-inline--fa fa-undo fa-w-16" aria-hidden="true" focusable="false"
+                    data-prefix="fas" data-icon="undo" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M212.333 224.333H12c-6.627 0-12-5.373-12-12V12C0 5.373 5.373 0 12 0h48c6.627 0 12 5.373 12 12v78.112C117.773 39.279 184.26 7.47 258.175 8.007c136.906.994 246.448 111.623 246.157 248.532C504.041 393.258 393.12 504 256.333 504c-64.089 0-122.496-24.313-166.51-64.215-5.099-4.622-5.334-12.554-.467-17.42l33.967-33.967c4.474-4.474 11.662-4.717 16.401-.525C170.76 415.336 211.58 432 256.333 432c97.268 0 176-78.716 176-176 0-97.267-78.716-176-176-176-58.496 0-110.28 28.476-142.274 72.333h98.274c6.627 0 12 5.373 12 12v48c0 6.627-5.373 12-12 12z">
+                    </path>
+                </svg><!-- <i class="fas fa-undo"></i> Font Awesome fontawesome.com -->
+            </button>
+            <button id="redo"><svg class="svg-inline--fa fa-redo fa-w-16" aria-hidden="true" focusable="false"
+                    data-prefix="fas" data-icon="redo" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M500.33 0h-47.41a12 12 0 0 0-12 12.57l4 82.76A247.42 247.42 0 0 0 256 8C119.34 8 7.9 119.53 8 256.19 8.1 393.07 119.1 504 256 504a247.1 247.1 0 0 0 166.18-63.91 12 12 0 0 0 .48-17.43l-34-34a12 12 0 0 0-16.38-.55A176 176 0 1 1 402.1 157.8l-101.53-4.87a12 12 0 0 0-12.57 12v47.41a12 12 0 0 0 12 12h200.33a12 12 0 0 0 12-12V12a12 12 0 0 0-12-12z">
+                    </path>
+                </svg><!-- <i class="fas fa-redo"></i> Font Awesome fontawesome.com -->
+            </button>
+            <button id="arrowUp"><svg class="svg-inline--fa fa-arrow-up fa-w-14" aria-hidden="true" focusable="false"
+                    data-prefix="fas" data-icon="arrow-up" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 448 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z">
+                    </path>
+                </svg><!-- <i class="fas fa-arrow-up"></i> Font Awesome fontawesome.com --></button>
+            <button id="arrowDown"><svg class="svg-inline--fa fa-arrow-down fa-w-14" aria-hidden="true"
+                    focusable="false" data-prefix="fas" data-icon="arrow-down" role="img"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M413.1 222.5l22.2 22.2c9.4 9.4 9.4 24.6 0 33.9L241 473c-9.4 9.4-24.6 9.4-33.9 0L12.7 278.6c-9.4-9.4-9.4-24.6 0-33.9l22.2-22.2c9.5-9.5 25-9.3 34.3.4L184 343.4V56c0-13.3 10.7-24 24-24h32c13.3 0 24 10.7 24 24v287.4l114.8-120.5c9.3-9.8 24.8-10 34.3-.4z">
+                    </path>
+                </svg><!-- <i class="fas fa-arrow-down"></i> Font Awesome fontawesome.com -->
+            </button>
+            <button id="arrowLeft"><svg class="svg-inline--fa fa-arrow-left fa-w-14" aria-hidden="true"
+                    focusable="false" data-prefix="fas" data-icon="arrow-left" role="img"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z">
+                    </path>
+                </svg><!-- <i class="fas fa-arrow-left"></i> Font Awesome fontawesome.com -->
+            </button>
+            <button id="arrowRight"><svg class="svg-inline--fa fa-arrow-right fa-w-14" aria-hidden="true"
+                    focusable="false" data-prefix="fas" data-icon="arrow-right" role="img"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z">
+                    </path>
+                </svg><!-- <i class="fas fa-arrow-right"></i> Font Awesome fontawesome.com -->
+            </button>
+            <button id="search"><svg class="svg-inline--fa fa-search fa-w-16" aria-hidden="true" focusable="false"
+                    data-prefix="fas" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z">
+                    </path>
+                </svg><!-- <i class="fas fa-search"></i> Font Awesome fontawesome.com -->
+            </button>
+            <button id="beautify"><svg class="svg-inline--fa fa-code fa-w-20" aria-hidden="true" focusable="false"
+                    data-prefix="fas" data-icon="code" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 640 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z">
+                    </path>
+                </svg><!-- <i class="fas fa-code"></i> Font Awesome fontawesome.com -->
+            </button>
             <button id="selectWord">
-                <i class="fas fa-chevron-double-right"></i>
+                <svg class="svg-inline--fa fa-chevron-double-right fa-w-16" aria-hidden="true" focusable="false"
+                    data-prefix="fas" data-icon="chevron-double-right" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M477.5 273L283.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9l154-154.7-154-154.7c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L477.5 239c9.3 9.4 9.3 24.6 0 34zm-192-34L91.1 44.7c-9.4-9.4-24.6-9.4-33.9 0L34.5 67.4c-9.4 9.4-9.4 24.5 0 33.9l154 154.7-154 154.7c-9.3 9.4-9.3 24.5 0 33.9l22.7 22.7c9.4 9.4 24.6 9.4 33.9 0L285.5 273c9.3-9.4 9.3-24.6 0-34z">
+                    </path>
+                </svg><!-- <i class="fas fa-chevron-double-right"></i> Font Awesome fontawesome.com -->
             </button>
-            <button id="menu"><i class="fas fa-ellipsis-v"></i></button>
+            <button id="menu"><svg class="svg-inline--fa fa-ellipsis-v fa-w-6" aria-hidden="true" focusable="false"
+                    data-prefix="fas" data-icon="ellipsis-v" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 192 512" data-fa-i2svg="">
+                    <path fill="currentColor"
+                        d="M96 184c39.8 0 72 32.2 72 72s-32.2 72-72 72-72-32.2-72-72 32.2-72 72-72zM24 80c0 39.8 32.2 72 72 72s72-32.2 72-72S135.8 8 96 8 24 40.2 24 80zm0 352c0 39.8 32.2 72 72 72s72-32.2 72-72-32.2-72-72-72-72 32.2-72 72z">
+                    </path>
+                </svg><!-- <i class="fas fa-ellipsis-v"></i> Font Awesome fontawesome.com -->
+            </button>
         </div>
         <div class="tools-line button-line">
-            <button id="PgUp">PgUp</button>
             <button id="Esc">Esc</button>
+            <button id="PgUp">PgUp</button>
+            <button id="PgDown">PgDown</button>
+            <button id="Tab">Tab</button>
             <button id="&">&</button>
             <button id="|">|</button>
             <button id="/">/</button>
             <button id="\">\</button>
-            <button id="&lt;&gt;">&lt;&gt;</button>
+            <button id="ltgt">&lt;&gt;</button>
             <button id="``">``</button>
-            <button id="PgDown">PgDown</button>
             <button id="~">~</button>
-            <button id="Tab">Tab</button>
             <button id="[]">[]</button>
             <button id="{}">{}</button>
             <button id="()">()</button>
@@ -95,10 +206,21 @@
                 document.querySelector(".preview").click();
             }
         });
-        const modal = document.querySelector(".modal");
-        window.addEventListener("click", (e) => {
-            if (e.target === modal) modal.remove();
-        });
+        document.onreadystatechange = function () {
+            if (document.readyState === "complete") {
+                setTimeout(function () {
+                    document.body.removeChild(document.querySelector(".loading-screen"));
+                    // Abort early if its not a touch screen
+                    if ("ontouchstart" in window) return;
+                    console.debug("loading ok!!!");
+                }, 400);
+
+            }
+        }
+        // const modal = document.querySelector(".modal");
+        // window.addEventListener("click", (e) => {
+        //     if (e.target === modal) modal.remove();
+        // });
         // document.querySelector(".closeBtn").onclick = () => {
         //     modal.remove();
         // };

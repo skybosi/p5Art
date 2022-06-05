@@ -48,8 +48,13 @@
         let textarea = selectedEditor.textInput.getElement();
 
         pk.addEventListener("click", function () {
+            const pkParent = document.querySelector("#pickerShow");
+            // 如果存在，删除老的防止无限插入picker
+            if (pkParent.children.length > 0) {
+                pkParent.children[0].remove();
+            }
             const picker = new Picker({
-                parent: pk,
+                parent: pkParent,
                 color: selectedEditor.getSelectedText() || "gold",
                 editor: true,
             });
@@ -161,55 +166,14 @@
         const prettier = require("ace/ext/beautify");
         function toolsAction (id) {
             switch (id) {
-                case "@":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 50,
-                    });
+                case "@": case "&": case "|":
+                case "\\": case "/":
+                case "``": case "~": case "()":
+                case "{}": case "[]": case "^":
+                    selectedEditor.insert(id)
                     break;
-                case "Esc":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 27,
-                    });
-                    break;
-                case "&":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 55,
-                    });
-                    break;
-                case "|":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 220,
-                        shiftKey: true
-                    });
-                    break;
-                case "\\":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 220,
-                    });
-                    break;
-                case "/":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 111,
-                    });
-                    break;
-                case "&lt;&gt;":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 188,
-                        shiftKey: true,
-                    });
-                    break;
-                case "``":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 192,
-                    });
+                case "ltgt":
+                    selectedEditor.insert("<>")
                     break;
                 case "PgUp":
                     simulateKey({
@@ -217,38 +181,7 @@
                         keyCode: 33,
                     });
                     break;
-                case "~":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 192,
-                        shiftKey: true,
-                    });
-                    break;
                 case "Tab":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 9,
-                    });
-                    break;
-                case "[]":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 9,
-                    });
-                    break;
-                case "{}":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 9,
-                    });
-                    break;
-                case "()":
-                    simulateKey({
-                        element: textarea,
-                        keyCode: 9,
-                    });
-                    break;
-                case "^":
                     simulateKey({
                         element: textarea,
                         keyCode: 9,
@@ -258,6 +191,12 @@
                     simulateKey({
                         element: textarea,
                         keyCode: 34,
+                    });
+                    break;
+                case "Esc":
+                    simulateKey({
+                        element: textarea,
+                        keyCode: 27,
                     });
                     break;
                 case "undo":
@@ -385,12 +324,12 @@
     // If the ace is not loaded offline message will apper
     if (typeof ace !== "undefined") {
         loadAce();
-        setTimeout(function () {
-            document.body.removeChild(document.querySelector(".loading-screen"));
-            // Abort early if its not a touch screen
-            if ("ontouchstart" in window) return;
-            // document.querySelector(".modal").style.display = "flex";
-        }, 1000);
+        // setTimeout(function () {
+        //     document.body.removeChild(document.querySelector(".loading-screen"));
+        //     // Abort early if its not a touch screen
+        //     if ("ontouchstart" in window) return;
+        //     // document.querySelector(".modal").style.display = "flex";
+        // }, 1000);
     } else {
         document.querySelector(".loading-screen h2").innerHTML =
             "You are offline 😪";

@@ -5,7 +5,8 @@ window.FontAwesomeKitConfig = {
     "autoA11y": {
         "enabled": true
     },
-    "baseUrl": "https://kit-pro.fontawesome.com",
+    // "baseUrl": "https://kit-pro.fontawesome.com",
+    "baseUrl": "js/libs",
     "detectConflictsUntil": null,
     "license": "pro",
     "method": "js",
