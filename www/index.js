@@ -302,13 +302,13 @@
             const erudaInit = document.createElement("script");
             erudaScript.defer = !0;
             erudaInit.defer = !0;
-            erudaScript.src = "js/libs/eruda/eruda-2.2.0.js";
+            erudaScript.src = "js/libs/eruda/eruda-2.4.1.js";
             erudaInit.innerHTML = `eruda.init({
-                    tool: ["console","elements","network","resources"],
+                    tool: ["console","elements","network","resources", "sources", "info"],
                     defaults: {
                     displaySize: 60
-            }});
-            eruda.remove("settings")`;
+            }});`
+            // eruda.remove("settings")`;
             newFrame.write("<head></head>");
             newFrame.write("<body></body>");
             newFrame.body.appendChild(erudaScript);

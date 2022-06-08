@@ -22,7 +22,10 @@
     </div> -->
     <div class="loading-screen">
         <div class="loading"></div>
-        <h2>loading...</h2>
+        <div>
+            <h2>欢迎使用p5艺术场 ~ P5Art</h2>
+            <h3>加载中...</h3>
+        </div>
     </div>
     <div class="preview">
         <svg style="color: white; transform: translateX(20%);" class="svg-inline--fa fa-caret-right fa-w-6"
@@ -214,8 +217,7 @@
                     // Abort early if its not a touch screen
                     if ("ontouchstart" in window) return;
                     console.debug("loading ok!!!");
-                }, 400);
-
+                }, 1000);
             }
         }
         // const modal = document.querySelector(".modal");
