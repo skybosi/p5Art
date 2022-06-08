@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Mobile Code Editor | Ace</title>
     <link rel="stylesheet" href="./style/style.css" />
+    <link rel="stylesheet" href="./style/tree.css" />
     <link rel="shortcut icon" type="image/jpg" href="/favicon.png" />
 </head>
 
@@ -22,9 +23,12 @@
     </div> -->
     <div class="loading-screen">
         <div class="loading"></div>
-        <h2>loading...</h2>
+        <div>
+            <h2>欢迎使用p5艺术场 ~ P5Art</h2>
+            <h3>加载中...</h3>
+        </div>
     </div>
-    <div class="preview">
+    <div class="preview" id="#ot">
         <svg style="color: white; transform: translateX(20%);" class="svg-inline--fa fa-caret-right fa-w-6"
             aria-hidden="true" focusable="false" data-prefix="fas" data-icon="caret-right" role="img"
             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512" data-fa-i2svg="">
@@ -34,14 +38,100 @@
         </svg>
         <!-- <i style="color: white; transform: translateX(20%);" class="fas fa-caret-right"></i> Font Awesome fontawesome.com -->
     </div>
+    <div class="file-brower-modal" id="filebrower">
+        <section class="TreeItem-module-Item-Z9p_2">
+            <header class="TreeItem-module-Header-y9zsU TreeItem-module-Header_emphasis-R0MUQ">
+                <button class="Arrow Arrow-module-Arrow-DD4Na">
+                    <!-- <img class="vscode-icon" src="asserts/fold.svg" /></img> -->
+                    <img class="vscode-icon" src="asserts/unfold.svg" /></img>
+                </button>
+                <h4 class="TreeItem-module-Title-UH6Yh">Files</h4><span class="TreeItem-module-Actions-KDPA2">
+                    <button id="add-file" class="FileTree-module-SectionAction-bHItX" aria-label="Add file"
+                        data-cy="add-file">
+                        <img class="vscode-icon" src="asserts/file.svg" /></img>
+                    </button>
+                    <button id="add-folder" class="FileTree-module-SectionAction-bHItX" aria-label="Add folder"
+                        data-cy="add-folder">
+                        <img class="vscode-icon" src="asserts/folder.svg" /></img>
+                    </button>
+                </span>
+            </header>
+            <div class="TreeItem-module-Content-n0Aor" id="filetree">
+                <!-- <div tabindex="0" data-cy="filetree" class="FileTree FileTree-module-FileTree-AITTG">
+                    <div>
+                        <div class="react-contextmenu-wrapper">
+                            <div class="FileItem-module-FileItem-Hxa_F FileItem-module-Selected-jKfXo FileItem-module-Focused-SlO2Q FileItem-module-IsFile-xrPAy"
+                                tabindex="0" data-cy="index.html" style="--itemDepth:1;">
+                                <button class="Arrow Arrow-module-Arrow-DD4Na FileItem-module-Arrow-jrp2H">
+                                    <img class="vscode-icon" src="asserts/unfold.svg" /></img>
+                                </button>
+                                <span class="FileItem-module-Marker-XZqF1"></span>
+                                <div class="FileName-module-root-fYtum" draggable="true">
+                                    <img class="vscode-icon" class="FileName-module-icon-SEpzz"
+                                        src="asserts/fileicon/html.svg" /></img>
+                                    <span class="FileName-module-name-aJJGC">index.html</span>
+                                </div>
+                                <span class="FileItem-module-Actions-bb0qc">
+                                    <button class="FileItem-module-ActionButton-VaOpF" aria-label="Rename">
+                                        <img class="vscode-icon" src="asserts/rename.svg" /></img>
+                                    </button>
+                                    <button class="FileItem-module-ActionButton-VaOpF" aria-label="Remove">
+                                        <img class="vscode-icon" src="asserts/delete.svg" /></img>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <nav role="menu" tabindex="-1" class="react-contextmenu"
+                            style="position: fixed; opacity: 0; pointer-events: none;">
+                            <div class="react-contextmenu-item" role="menuitem" tabindex="-1" aria-disabled="false">
+                                <span class="react-contextmenu-icon">
+                                    <img class="vscode-icon" src="asserts/rename.svg" /></img>
+                                </span>
+                                <span class="react-contextmenu-label">Rename</span>
+                            </div>
+                            <div class="react-contextmenu-item" role="menuitem" tabindex="-1" aria-disabled="false">
+                                <span class="react-contextmenu-icon">
+                                    <img class="vscode-icon" src="asserts/delete.svg" /></img>
+                                </span>
+                                <span class="react-contextmenu-label">Delete</span>
+                            </div>
+                        </nav>
+                    </div>
+                </div> -->
+            </div>
+        </section>
+    </div>
     <nav>
         <ul>
-            <li><a href="#" data-id="editorHtml" class="active">HTML</a></li>
+            <li>
+                <a id="fileBrowerCtrl" href="#" data-id="fileBrower" class="active" style="font-size: 18px;">
+                    <img class="svg-inline--fa fa-palette fa-w-16" aria-hidden="true" focusable="false"
+                        data-prefix="fas" data-icon="palette" role="img" fill="#cccccc"
+                        src="js/libs/releases/latest/svgs/solid/bars.svg" /></img>
+                </a>
+            </li>
+            <li><a id="prviewCtrl" href="#" data-id="previewCtrl">返回</a></li>
+        </ul>
+    </nav>
+    <!-- <nav>
+        <ul>
+            <li>
+                <a href="#" data-id="fileBrower" class="active">
+                    <svg class="svg-inline--fa fa-palette fa-w-16" aria-hidden="true" focusable="false"
+                        data-prefix="fas" data-icon="palette" role="img" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 512 512" data-fa-i2svg="">
+                        <path fill="currentColor"
+                            d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z">
+                        </path>
+                    </svg>
+                </a>
+            </li>
+            <li><a href="#" data-id="editorHtml">HTML</a></li>
             <li><a href="#" data-id="editorCSS">CSS</a></li>
             <li><a href="#" data-id="editorJS">Javascript</a></li>
             <li><a href="#" data-id="previewOt" id="ot">Output</a></li>
         </ul>
-    </nav>
+    </nav> -->
     <div class="editor-wrapper">
         <div id="editorHtml"></div>
         <div id="editorCSS"></div>
@@ -193,6 +283,7 @@
             <button id="@">@</button>
         </div>
     </div>
+    <script src="./js/filedom.js"></script>
     <script src="./js/_js-snippets.js"></script>
     <script src="./js/p5/p5_autocomplete.js"></script>
     <script src="./js/scripts.js"></script>
@@ -214,8 +305,7 @@
                     // Abort early if its not a touch screen
                     if ("ontouchstart" in window) return;
                     console.debug("loading ok!!!");
-                }, 400);
-
+                }, 1000);
             }
         }
         // const modal = document.querySelector(".modal");

@@ -89,12 +89,20 @@
     }
 
     function loadInitialCode ({ editorCSS, editorHTML, editorJS }) {
-        if (!initialValue) return;
-        const { css, js, html } = initialValue;
-        console.log("code", css, js, html)
-        editorJS.setValue(js, 1);
-        editorCSS.setValue(css, 1);
-        editorHTML.setValue(html, 1);
+        return new Promise((resolve, reject) => {
+            if (!initialValue) return;
+            // 加载初始化数据
+            loadFileList("index.html");
+            loadFileList("style.css");
+            loadFileList("sketch.js");
+
+            const { css, js, html } = initialValue;
+            console.log("code", css, js, html)
+            editorJS.setValue(js, 1);
+            editorCSS.setValue(css, 1);
+            editorHTML.setValue(html, 1);
+            resolve()
+        })
     }
     window.saveCode = saveCode;
     window.loadInitialCode = loadInitialCode;

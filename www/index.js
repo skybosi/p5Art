@@ -28,6 +28,7 @@
             editor.setShowPrintMargin(false);
             return editor;
         }
+
         const editorHTML = aceMixin({
             parent: "editorHtml",
             mode: "html",
@@ -43,9 +44,89 @@
             mode: "javascript",
         });
 
-        loadInitialCode({ editorCSS, editorJS, editorHTML });
-
+        var item = [editorHTML, editorCSS, editorJS]
         let selectedEditor = editorHTML;
+
+        loadInitialCode({ editorCSS, editorJS, editorHTML }).then(res => {
+            console.log("loadInitialCode hahaha")
+            // Add Event dynamically om the navigation
+            function changeEditor (id, forceRender = "false") {
+                const output = document.querySelector(".output");
+                selectedEditor.off("focus", updateFocus);
+                switch (id) {
+                    case "editorCSS":
+                        if (output) output.style.visibility = "hidden";
+                        selectedEditor = editorCSS;
+                        swapChildren(id);
+                        break;
+                    case "editorHtml":
+                        if (output) output.style.visibility = "hidden";
+                        selectedEditor = editorHTML;
+                        swapChildren(id);
+                        break;
+                    case "editorJS":
+                        if (output) output.style.visibility = "hidden";
+                        selectedEditor = editorJS;
+                        swapChildren(id);
+                        break;
+                    case "previewOt":
+                        if (forceRender === "true") {
+                            if (output) output.remove();
+                            updateDocument(forceRender);
+                        } else {
+                            if (output) {
+                                output.style.visibility = "";
+                            } else {
+                                updateDocument(forceRender);
+                            }
+                        }
+                        break;
+                    default:
+
+                        break
+                }
+                selectedEditor.on("focus", updateFocus);
+            }
+
+            // const nav = document.querySelectorAll("nav a");
+            const nav = document.getElementsByClassName("FileTreeFileItem");
+            console.log("FileTreeFileItem", nav)
+            for (let i = 0; i < nav.length; i++) {
+                const child = nav[i];
+                child.addEventListener("click", function (e) {
+                    if (e && e.dataset && true === e.dataset.forceRender) {
+                        child.dataset.forceRender = e.dataset.forceRender;
+                    } else {
+                        child.dataset.forceRender = false
+                    }
+                    document.querySelector(".active").classList.remove("active");
+                    this.classList.add("active");
+                    changeEditor(child.dataset.id, child.dataset.forceRender);
+                    selectedEditor = item[i];
+                    e.stopPropagation();
+                    const filebrower = document.querySelector(".file-brower-modal");
+                    if (filebrower && filebrower.classList.contains("file-modal-unfold")) {
+                        filebrower.classList.add("file-modal-fold")
+                        filebrower.classList.remove("file-modal-unfold")
+                        filebrower.style.display = "none";
+                    }
+                });
+            }
+        })
+
+        document.body.addEventListener("click", function (e) {
+            console.log(e)
+            e.preventDefault();
+            // if (e.target.id !== "filebrower") {
+            //     const filebrower = document.querySelector(".file-brower-modal");
+            //     if (filebrower && filebrower.classList.contains("file-modal-unfold")) {
+            //         filebrower.classList.add("file-modal-fold")
+            //         filebrower.classList.remove("file-modal-unfold")
+            //         filebrower.style.display = "none";
+            //     }
+            // }
+        });
+
         const pk = document.querySelector("#picker");
         let textarea = selectedEditor.textInput.getElement();
 
@@ -101,68 +182,47 @@
             }
         };
 
-        // Add Event dynamically om the navigation
-        function changeEditor (id, forceRender = "false") {
+        // 目录树展开
+        const fileBrowerCtrl = document.getElementById("fileBrowerCtrl");
+        fileBrowerCtrl.addEventListener("click", function (e) {
+            const filebrower = document.querySelector(".file-brower-modal");
+            if (filebrower) {
+                filebrower.style.display = "block";
+                filebrower.classList.add("file-modal-unfold")
+                filebrower.classList.remove("file-modal-fold")
+            }
+            e.stopPropagation()
+        });
+
+
+        const prviewCtrl = document.getElementById("prviewCtrl");
+        prviewCtrl.addEventListener("click", function (e) {
+            const output = document.querySelector(".output");
+            if (output) {
+                output.style.visibility = "hidden";
+            }
+        });
+
+        document.querySelector(".preview").onclick = () => {
             const output = document.querySelector(".output");
             selectedEditor.off("focus", updateFocus);
-            switch (id) {
-                case "editorCSS":
-                    if (output) output.style.visibility = "hidden";
-                    selectedEditor = editorCSS;
-                    swapChildren(id);
-                    break;
-                case "editorHtml":
-                    if (output) output.style.visibility = "hidden";
-                    selectedEditor = editorHTML;
-                    swapChildren(id);
-                    break;
-                case "editorJS":
-                    if (output) output.style.visibility = "hidden";
-                    selectedEditor = editorJS;
-                    swapChildren(id);
-                    break;
-                case "previewOt":
-                    if (forceRender === "true") {
-                        if (output) output.remove();
-                        updateDocument(forceRender);
-                    } else {
-                        if (output) {
-                            output.style.visibility = "";
-                        } else {
-                            updateDocument(forceRender);
-                        }
-                    }
-                    break;
-                default:
-                    break
-            }
-            selectedEditor.on("focus", updateFocus);
-        }
-
-        const nav = document.querySelectorAll("nav a");
-        nav.forEach((child) => {
-            child.addEventListener("click", function (e) {
-                // if (this === nav[nav.length - 1]) {
-                //     updateDocument(true);
-                // }
-                if (e && e.dataset && true === e.dataset.forceRender) {
-                    child.dataset.forceRender = e.dataset.forceRender;
+            var forceRender = "true"
+            if (forceRender === "true") {
+                if (output) output.remove();
+                updateDocument(forceRender);
+            } else {
+                if (output) {
+                    output.style.visibility = "";
                 } else {
-                    child.dataset.forceRender = false
+                    updateDocument(forceRender);
                 }
-                document.querySelector(".active").classList.remove("active");
-                this.classList.add("active");
-                changeEditor(child.dataset.id, child.dataset.forceRender);
-                textarea = selectedEditor.textInput.getElement();
-            });
-        });
-        document.querySelector(".preview").onclick = () => {
-            const event = document.createEvent("HTMLEvents");
-            event.initEvent("click", true, false);
-            event.dataset = {
-                forceRender: true
-            };
-            document.querySelector("#ot").dispatchEvent(event);
+            }
+            // const event = document.createEvent("HTMLEvents");
+            // event.initEvent("click", true, false);
+            // event.dataset = {
+            //     forceRender: true
+            // };
+            // document.querySelector("#ot").dispatchEvent(event);
         }
 
         const prettier = require("ace/ext/beautify");
@@ -302,13 +362,13 @@
             const erudaInit = document.createElement("script");
             erudaScript.defer = !0;
             erudaInit.defer = !0;
-            erudaScript.src = "js/libs/eruda/eruda-2.2.0.js";
+            erudaScript.src = "js/libs/eruda/eruda-2.4.1.js";
             erudaInit.innerHTML = `eruda.init({
-                    tool: ["console","elements","network","resources"],
+                    tool: ["console","elements","network","resources", "sources", "info"],
                     defaults: {
                     displaySize: 60
-            }});
-            eruda.remove("settings")`;
+            }});`
+            // eruda.remove("settings")`;
             newFrame.write("<head></head>");
             newFrame.write("<body></body>");
             newFrame.body.appendChild(erudaScript);
@@ -368,6 +428,12 @@
             const langTools = require('ace/ext/language_tools');
             langTools.addCompleter(completer);
         }
+    }
+
+    function fileManger () {
+        document.body.addEventListener("click", function (e) {
+
+        });
     }
 
     // If the ace is not loaded offline message will apper
