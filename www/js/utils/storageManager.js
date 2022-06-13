@@ -72,6 +72,18 @@
 
     const initialValue = getCode();
 
+    function checkFormat (code_tb) {
+        for (const key in code_tb) {
+            let item = code_tb[key]
+            if (typeof item == "string" ||
+                !code_tb["type"] ||
+                !code_tb["value"]) {
+                return false
+            }
+        }
+        return true;
+    }
+
     function saveCode (fileName, type, value) {
         var code_tb = getCode();
         code_tb[fileName] = { type, value };
@@ -102,7 +114,12 @@
     }
 
     function loadInitialCode () {
-        if (Object.keys(getCode()).length > 0) return;
+        let code_tb = getCode();
+        if (Object.keys(code_tb).length > 0) {
+            if (checkFormat(code_tb)) {
+                return
+            }
+        }
         const { css, js, js2, html } = defaultValue;
         console.log("code", css, js, html);
         saveCode("index.css", "css", css);
