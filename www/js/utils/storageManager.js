@@ -75,9 +75,7 @@
     function checkFormat (code_tb) {
         for (const key in code_tb) {
             let item = code_tb[key]
-            if (typeof item == "string" ||
-                !code_tb["type"] ||
-                !code_tb["value"]) {
+            if (typeof item == "string" || !item["type"] || !item["value"]) {
                 return false
             }
         }
