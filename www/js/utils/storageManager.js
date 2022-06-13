@@ -58,11 +58,6 @@
           }
       }
       `,
-        js2: `
-      function windowResized() {
-          resizeCanvas(windowWidth, windowHeight);
-      }
-      `,
         html: `<!DOCTYPE html>
       <html>
         <head>

@@ -43,13 +43,13 @@
         <header class="tile">
             <span class="text sub-text" id="tilte-text" data-subtext="javascript"
                 style="padding-left: 19px;">sketch.js</span>
-            <span class="icon add_circle" id="addFile" action="add-file" style="font-size: 1.2em;"></span>
+            <span class="icon add_circle" id="addFileCtrl" action="add-file" style="font-size: 1.2em;"></span>
             <span class="icon save" id="saveCtrl" action="run-file" data-file="sketch.js"
                 style="font-size: 1.2em;"></span>
-            <span class="icon arrow_back" id="back" style="font-size: 1.2em !important;display: none;" action=""></span>
-            <span class="icon refresh" id="refresh" style="font-size: 1.2em !important;display: none;" action=""></span>
-            <span class="icon play_arrow" id="preview" action="run-file" style="font-size: 1.2em;"></span>
-            <span class="icon more_vert" action="toggle-menu"></span>
+            <span class="icon arrow_back" id="backCtrl" style="font-size: 1.2em !important;display: none;" action=""></span>
+            <span class="icon refresh" id="refreshCtrl" style="font-size: 1.2em !important;display: none;" action=""></span>
+            <span class="icon play_arrow" id="previewCtrl" action="run-file" style="font-size: 1.2em;"></span>
+            <span class="icon more_vert" id="moreCtrl" action="toggle-menu"></span>
         </header>
         <main>
             <div class="editor-container ace_editor default ace-monokai ace_dark">
@@ -57,17 +57,6 @@
             </div>
         </main>
         <div id="pickerLayout" style="position: relative;z-index: 10;"></div>
-        <div id="addfileLayout" style="display: none;">
-            <div class="prompt">
-                <span class="message scroll">输入文件名</span>
-                <input class="input" placeholder="" type="text">
-                <span class="error-msg"> </span>
-                <div class="button-container">
-                    <button action="" id="addfileCancel">取消</button>
-                    <button action="" id="addfileSubmit">确认</button>
-                </div>
-            </div>
-        </div>
         <footer id="quick-tools" class="quick-tools" tabindex="-1">
             <div id="row1" class="button-container">
                 <div class="section">
@@ -120,7 +109,6 @@
     <script src="./js/libs/scripts.js"></script>
     <script src="./js/p5/p5_autocomplete.js"></script>
     <script src="./js/utils/js-snippets.js"></script>
-    <script src="./js/utils/swapChildren.js"></script>
     <script src="./js/utils/simulateKey.js"></script>
     <script src="./js/utils/storageManager.js"></script>
     <script src="./index.js"></script>

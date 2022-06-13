@@ -166,11 +166,11 @@
 
         // 按钮dom
         var saveCtrlElement = document.getElementById("saveCtrl");
-        var backCtrlElement = document.getElementById("back");
-        var previewCtrlElement = document.getElementById("preview");
-        var refreshCtrlElement = document.getElementById("refresh");
-        var addfileCtrlElement = document.getElementById("addFile");
-        var addfileSubmitCtrlElement = document.getElementById("addfileSubmit");
+        var backCtrlElement = document.getElementById("backCtrl");
+        var previewCtrlElement = document.getElementById("previewCtrl");
+        var refreshCtrlElement = document.getElementById("refreshCtrl");
+        var addfileCtrlElement = document.getElementById("addFileCtrl");
+        var moreCtrlElement = document.getElementById("moreCtrl");
         var activeFile = document.querySelector(".active");
         selectedEditor.target = activeFile;
 
@@ -224,25 +224,38 @@
 
         // 新增文件
         addfileCtrlElement.onclick = (e) => {
-            document.getElementById("addfileLayout").style.display = "";
+            var placehodler = "请输入文件", cancel = "取消", submit = "确定";
+            var addFileItem = document.createElement("div");
+            addFileItem.id = "addfileLayout"
+            addFileItem.innerHTML = render(layouts["addFileLayout"], { placehodler, cancel, submit });
+            addFileItem.onclick = (e) => {
+                activeFile.classList.remove("active");
+                var fileItem = document.createElement("li");
+                fileItem.classList.add("tile", "light", "active");
+                var fileName = "test.js", fileType = "javascript";
+                fileItem.innerHTML = render(layouts["openFile"], { fileName, fileType });
+                activeFile = fileItem;
+                fileList.appendChild(fileItem);
+                setTimeout(() => {
+                    fileList.scrollLeft += 200;
+                    addFileItem.remove();
+                }, 150)
+            }
+            document.body.appendChild(addFileItem);
         }
 
-        addfileSubmitCtrlElement.onclick = (e) => {
-            activeFile.classList.remove("active");
-            var item = document.createElement("li");
-            item.classList.add("tile");
-            item.classList.add("light");
-            item.classList.add("active");
-            var fileName = "test.js", fileType = "javascript";
-            item.innerHTML = `<i class="file file_type_${fileType}" style="padding-right: 5px;"></i>
-            <span class="text">${fileName}</span>
-            <span class="icon cancel" action=""> </span>`;
-            activeFile = item;
-            fileList.appendChild(item);
-            document.getElementById("addfileLayout").style.display = "none";
-            setTimeout(() => {
-                fileList.scrollLeft += 200;
-            }, 200)
+        // 更多设置
+        moreCtrlElement.onclick = (e) => {
+            var openRecent = "打开最近", settings = "设置", help = "帮助", exit = "退出"
+            var moreItem = document.createElement("ul");
+            moreItem.id = "moreLayout";
+            moreItem.classList.add("context-menu", "scroll");
+            moreItem.style = "inset: 6px 6px auto auto; transform-origin: right top;";
+            moreItem.innerHTML = render(layouts["more"], { openRecent, settings, help, exit });
+            moreItem.onclick = (e) => {
+                moreItem.remove()
+            }
+            document.body.appendChild(moreItem);
         }
 
         // 文件内容变更
