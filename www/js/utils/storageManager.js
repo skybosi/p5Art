@@ -84,6 +84,10 @@
         return true;
     }
 
+    function clearCode() {
+        localStorage.clear();
+    }
+
     function saveCode (fileName, type, value) {
         var code_tb = getCode();
         code_tb[fileName] = { type, value };
@@ -118,13 +122,14 @@
         if (Object.keys(code_tb).length > 0) {
             if (checkFormat(code_tb)) {
                 return
+            } else {
+                clearCode();
             }
         }
         const { css, js, js2, html } = defaultValue;
         console.log("code", css, js, html);
         saveCode("index.css", "css", css);
         saveCode("sketch.js", "javascript", js);
-        saveCode("sketch2.js", "javascript", js2);
         saveCode("index.html", "html", html);
     }
 
