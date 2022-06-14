@@ -23,7 +23,14 @@
       "browser"
     ],
     "plugins": {
-      "cordova-plugin-whitelist": {}
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-photo-library": {
+        "PHOTO_LIBRARY_USAGE_DESCRIPTION": "To choose photos"
+      }
     }
+  },
+  "dependencies": {
+    "cordova-plugin-file": "6.0.2",
+    "cordova-plugin-photo-library": "2.3.1"
   }
 }

@@ -10,4 +10,5 @@
     <icon src="www/img/192x192.png" />
     <allow-navigation href="*" />
     <allow-intent href="*" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
 </widget>

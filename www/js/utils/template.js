@@ -29,6 +29,10 @@ const layouts = {
       <span id='total-result'>0</span>
     </div>
   </div>`,
+    "context-menu": `<span id="copyCtrl" action='copy'>{{copy}}</span>
+    <span id="cutCtrl" action='cut'>{{cut}}</span>
+    <span id="pasteCtrl" action='paste'>{{paste}}</span>
+    <span id="selectAllCtrl" action='select all'>{{selectall}}</span>`,
     // 更多设置
     "more": `<li action="recent">
     <span class="text">{{openRecent}}</span>

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Mobile Code Editor | Ace</title>
+    <script src="cordova.js"></script>
     <link rel="stylesheet" href="./style/style.css" />
     <link rel="stylesheet" href="./style/main.css" />
     <link rel="stylesheet" href="./res/icon-file/style.css">
@@ -43,15 +44,16 @@
         <header class="tile">
             <span class="text sub-text" id="tilte-text" data-subtext="javascript"
                 style="padding-left: 19px;">sketch.js</span>
-            <span class="icon add_circle" id="addFileCtrl" action="add-file" style="font-size: 1.2em;"></span>
+            <span class="icon add_circle" id="addFileCtrl" action="add-file" style="font-size: 1.5em;"></span>
             <span class="icon save" id="saveCtrl" action="run-file" data-file="sketch.js"
-                style="font-size: 1.2em;"></span>
-            <span class="icon arrow_back" id="backCtrl" style="font-size: 1.2em !important;display: none;" action=""></span>
-            <span class="icon refresh" id="refreshCtrl" style="font-size: 1.2em !important;display: none;" action=""></span>
-            <span class="icon play_arrow" id="previewCtrl" action="run-file" style="font-size: 1.2em;"></span>
+                style="font-size: 1.5em;"></span>
+            <span class="icon arrow_back" id="backCtrl" style="font-size: 1.5em !important;display: none;" action=""></span>
+            <span class="icon refresh" id="refreshCtrl" style="font-size: 1.5em !important;display: none;" action=""></span>
+            <span class="icon cut" id="cutSreenCtrl" style="font-size: 1.4em !important;display: none;" action=""></span>
             <span class="icon more_vert" id="moreCtrl" action="toggle-menu"></span>
         </header>
         <main>
+            <span class="preview icon play_arrow" id="previewCtrl" action="run-file" style="font-size: 1.5em;"></span>
             <div class="editor-container ace_editor default ace-monokai ace_dark">
                 <div id="editor-container"></div>
             </div>
