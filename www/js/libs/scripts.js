@@ -13,8 +13,8 @@
         "js/utils/render.js",
         "js/utils/template.js",
         // module
+        "js/modules/Base.js",
         "js/modules/EditorManager.js",
-        "js/modules/Focus.js",
         "js/modules/LoadAutoComplete.js",
         "js/modules/PickerView.js",
         "js/modules/TextControl.js",

@@ -42,6 +42,7 @@ function EditorManager (selectedEditor) {
         // 显示返回页面
         saveCtrlElement.style.display = "none";
         addfileCtrlElement.style.display = "none";
+        moreCtrlElement.style.display = "none";
         backCtrlElement.style.display = "";
         refreshCtrlElement.style.display = "";
         cutSreenCtrlElement.style.display = "";
@@ -53,6 +54,7 @@ function EditorManager (selectedEditor) {
     backCtrlElement.onclick = (e) => {
         saveCtrlElement.style.display = "";
         addfileCtrlElement.style.display = "";
+        moreCtrlElement.style.display = "";
         backCtrlElement.style.display = "none";
         refreshCtrlElement.style.display = "none";
         cutSreenCtrlElement.style.display = "none";
@@ -69,20 +71,16 @@ function EditorManager (selectedEditor) {
                     function (e) {
                         // User gave us permission to his library, retry reading it!
                         console.log("requestAuthorization ok", e)
-                        var dataUrl = output.contentWindow._curElement.elt.toDataURL();
-                        console.log("dataUrl", dataUrl)
-                        var url = dataUrl; // file or remote URL. url can also be dataURL, but giving it a file path is much faster
-                        var album = 'p5.jpg';
-                        cordova.plugins.photoLibrary.saveImage(url,
-                            album,
-                            function (libraryItem) {
-                                console.log("saveImage", libraryItem)
-                            }, function (err) {
-                                console.log("saveImage err", err)
-                            });
+                        saveImage(output.contentWindow._curElement.elt, "png")
+                            .then(() => {
+                                alter("已保存到相册")
+                            }).catch(e => {
+                                alter("保存相册失败")
+                            })
                     },
                     function (err) {
                         console.log("requestAuthorization err", err)
+                        alter("保存相册失败")
                     }, // if options not provided, defaults to {read: true}.
                     {
                         read: true,
@@ -92,10 +90,46 @@ function EditorManager (selectedEditor) {
                 break;
             case "browser":
                 output.contentWindow.saveScreen();
+                setTimeout(() => { alter("保存成功") }, 300);
                 break;
             default:
                 console.log("not support", cordova.platformId)
                 break;
+        }
+
+        function saveImage (canvas, extension, encoderOptions) {
+            return new Promise((resolve, reject) => {
+                let mimeType;
+                if (!extension) {
+                    extension = 'png';
+                    mimeType = 'image/png';
+                } else {
+                    switch (extension.toLowerCase()) {
+                        case 'png':
+                            mimeType = 'image/png';
+                            break;
+                        case 'jpeg': case 'jpg':
+                            mimeType = 'image/jpeg';
+                            break;
+                        default:
+                            mimeType = 'image/png';
+                            break;
+                    }
+                }
+                // file or remote URL. url can also be dataURL, but giving it a file path is much faster
+                var url = canvas.toDataURL(mimeType, encoderOptions);
+                var album = 'p5Art';
+                cordova.plugins.photoLibrary.saveImage(url, album,
+                    (libraryItem) => {
+                        console.log("saveImage", libraryItem)
+                        resolve("ok");
+                    },
+                    (err) => {
+                        console.log("saveImage err", err)
+                        reject(err)
+                    }
+                );
+            });
         }
     }
 
@@ -129,7 +163,7 @@ function EditorManager (selectedEditor) {
 
     // 更多设置
     moreCtrlElement.onclick = (e) => {
-        var openRecent = "打开最近", settings = "设置", help = "帮助", exit = "退出"
+        var openRecent = "打开最近", settings = "设置", help = "帮助", exit = "退出";
         var moreItem = document.createElement("ul");
         moreItem.id = "moreLayout";
         moreItem.classList.add("context-menu", "scroll");
@@ -139,6 +173,11 @@ function EditorManager (selectedEditor) {
             moreItem.remove()
         }
         document.body.appendChild(moreItem);
+        moreItem.querySelectorAll("li").forEach((child) => {
+            child.addEventListener("click", function (e) {
+                console.log(e, e.target.innerHTML);
+            });
+        });
     }
 
     // 文件内容变更
