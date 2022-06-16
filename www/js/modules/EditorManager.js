@@ -141,16 +141,18 @@ function EditorManager (selectedEditor) {
 
     // 新增文件
     addfileCtrlElement.onclick = (e) => {
-        var placehodler = "请输入文件", cancel = "取消", submit = "确定";
         var addFileItem = document.createElement("div");
         addFileItem.id = "addfileLayout"
-        addFileItem.innerHTML = render(layouts["addFileLayout"], { placehodler, cancel, submit });
+        addFileItem.innerHTML = render(layouts["addFileLayout"]);
         addFileItem.onclick = (e) => {
             activeFile.classList.remove("active");
             var fileItem = document.createElement("li");
             fileItem.classList.add("tile", "light", "active");
             var fileName = "test.js", fileType = "javascript";
-            fileItem.innerHTML = render(layouts["openFile"], { fileName, fileType });
+            fileItem.innerHTML = render(layouts["openFile"], {
+                "file name": fileName,
+                "file type": fileType,
+            });
             activeFile = fileItem;
             fileList.appendChild(fileItem);
             setTimeout(() => {
@@ -163,12 +165,11 @@ function EditorManager (selectedEditor) {
 
     // 更多设置
     moreCtrlElement.onclick = (e) => {
-        var openRecent = "打开最近", settings = "设置", help = "帮助", exit = "退出";
         var moreItem = document.createElement("ul");
         moreItem.id = "moreLayout";
         moreItem.classList.add("context-menu", "scroll");
         moreItem.style = "inset: 6px 6px auto auto; transform-origin: right top;";
-        moreItem.innerHTML = render(layouts["more"], { openRecent, settings, help, exit });
+        moreItem.innerHTML = render(layouts["more"]);
         moreItem.onclick = (e) => {
             moreItem.remove()
         }

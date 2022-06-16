@@ -111,19 +111,14 @@
             </div>
         </footer>
     </div>
-    <script src="./js/libs/scripts.js"></script>
     <script src="./js/p5/p5_autocomplete.js"></script>
     <script src="./js/utils/js-snippets.js"></script>
     <script src="./js/utils/simulateKey.js"></script>
     <script src="./js/utils/storageManager.js"></script>
+    <script src="./js/i18n/languages.js"></script>
+    <script src="./js/libs/scripts.js"></script>
     <script src="./index.js"></script>
     <script>
-        document.addEventListener("keydown", (e) => {
-            if (e.ctrlKey && e.which === 83) {
-                e.preventDefault();
-                document.querySelector(".preview").click();
-            }
-        });
         document.onreadystatechange = function () {
             if (document.readyState === "complete") {
                 setTimeout(function () {
@@ -134,7 +129,6 @@
                 }, 1000);
             }
         }
-
     </script>
 </body>
 

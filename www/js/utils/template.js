@@ -1,16 +1,16 @@
 const layouts = {
     "addFileLayout": `<div class="prompt">
-        <span class="message scroll">{{placehodler}}</span>
+        <span class="message scroll">{{enter file name}}</span>
         <input class="input" placeholder="" type="text">
         <span class="error-msg"> </span>
         <div class="button-container">
             <button action="" id="addfileCancel">{{cancel}}</button>
-            <button action="" id="addfileSubmit">{{submit}}</button>
+            <button action="" id="addfileSubmit">{{ok}}</button>
         </div>
     </div>`,
     // 添加文件
-    "openFile": `<i class="file file_type_{{fileType}}" style="padding-right: 5px;"></i>
-<span class="text">{{fileName}}</span>
+    "openFile": `<i class="file file_type_{{file type}}" style="padding-right: 5px;"></i>
+<span class="text">{{file name}}</span>
 <span class="icon cancel" action=""></span>`,
     // 搜索框
     "search": `<div class='button-container' id='search_row1'>
@@ -32,10 +32,10 @@ const layouts = {
     "context-menu": `<span id="copyCtrl" action='copy'>{{copy}}</span>
     <span id="cutCtrl" action='cut'>{{cut}}</span>
     <span id="pasteCtrl" action='paste'>{{paste}}</span>
-    <span id="selectAllCtrl" action='select all'>{{selectall}}</span>`,
+    <span id="selectAllCtrl" action='select all'>{{select all}}</span>`,
     // 更多设置
     "more": `<li action="recent">
-    <span class="text">{{openRecent}}</span>
+    <span class="text">{{open recent}}</span>
     <span class="icon historyrestore"></span>
   </li>
   <hr>

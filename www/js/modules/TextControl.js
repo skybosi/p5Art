@@ -10,12 +10,11 @@ function TextControl (editor, container) {
 
     // 弹出菜单
     function contextmenu (x, y) {
-        var copy = "复制", cut = "剪切", paste = "粘贴", selectall = "全选"
         contextMenuElement = document.createElement("div");
         contextMenuElement.id = "clipboard-contextmneu";
         contextMenuElement.classList.add("clipboard-contextmneu");
         contextMenuElement.style = `transform: translate3d(${x}px, ${y}px, 0px) scale(1);`;
-        contextMenuElement.innerHTML = render(layouts["context-menu"], { copy, cut, paste, selectall });
+        contextMenuElement.innerHTML = render(layouts["context-menu"]);
         document.body.appendChild(contextMenuElement);
 
         // item event

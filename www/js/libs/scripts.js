@@ -9,6 +9,7 @@
         "js/libs/ace/1.5.3/snippets/snippets.js",
         "js/libs/ace/1.5.3/snippets/javascript.min.js",
         "js/libs/vanilla-picker.min.js",
+        "js/i18n/getLanguage.js",
         // utils
         "js/utils/render.js",
         "js/utils/template.js",
