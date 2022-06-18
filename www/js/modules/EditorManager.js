@@ -129,10 +129,11 @@ function EditorManager (selectedEditor) {
                             addFileItem.getElementsByClassName("error-msg")[0].innerText = strings["required"];
                             break
                         }
-                        addFileLayout();
-                        saveCode(fileName, fileType, "");
+                        var fileType = getFileSuffix(filename) || 'file';
+                        addFileLayout(filename, fileType);
+                        saveCode(filename, fileType, "");
                         // 新增暂存的文件
-                        allCodeTmp[fileName] = {
+                        allCodeTmp[filename] = {
                             "type": fileType,
                             "value": "",
                         }
@@ -140,7 +141,7 @@ function EditorManager (selectedEditor) {
                         setTimeout(() => {
                             fileList.scrollLeft += 200;
                             addFileItem.remove();
-                            changeEditor(fileName)
+                            changeEditor(filename)
                         }, 150)
                         break
                 }
@@ -209,13 +210,12 @@ function EditorManager (selectedEditor) {
     }
 
     // 添加文件项的到dome
-    function addFileLayout (filename) {
+    function addFileLayout (fileName, fileType) {
         if (activeFile && activeFile.classList) {
             activeFile.classList.remove("active");
         }
         var fileItem = document.createElement("li");
         fileItem.classList.add("tile", "light", "active");
-        var fileName = filename, fileType = getFileSuffix(filename) || 'file';
         fileItem.innerHTML = render(layouts["openFile"], {
             "file name": fileName,
             "file type": fileType,
@@ -244,7 +244,8 @@ function EditorManager (selectedEditor) {
         }
         for (let i = 0; i < newList.length; i++) {
             const filename = newList[i];
-            addFileLayout(filename)
+            var fileType = getFileSuffix(filename) || 'file';
+            addFileLayout(filename, fileType);
         }
     }
 
