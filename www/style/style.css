@@ -2,7 +2,7 @@ html,
 body {
     height: 100%;
     --primary: #3a3a3a;
-    --nav-height: 40px;
+    --nav-height: 50px;
     --tool-height: 120px;
 }
 
@@ -202,9 +202,9 @@ body {
     display: inline-block;
 }
 
-.tools .redo {
+/* .tools .redo {
     transform: rotateY(180deg);
-}
+} */
 
 .tools i {
     background: white;
@@ -304,6 +304,7 @@ iframe {
 
 #editorHtml,
 #editorCSS,
+#editor-container,
 #editorJS {
     height: 100%;
     width: 100%;
@@ -360,7 +361,7 @@ iframe {
     background: var(--primary);
     display: flex;
     position: fixed;
-    top: 60px;
+    top: 80px;
     opacity: 0.8;
     right: 8%;
     z-index: 5;
