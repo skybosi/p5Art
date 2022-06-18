@@ -1,5 +1,5 @@
 var languages = {
-    ar_ye: {
+    "ar-ye": {
         "lang": "(by Basel Al_hajeri) العربية",
         "about": "حول",
         "active files": "الملفات مفتوحة",
@@ -233,7 +233,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    be_by: {
+    "be-by": {
         "lang": "Беларуская",
         "about": "пра праграму",
         "active files": "Адкрытыя файлы",
@@ -467,7 +467,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    bn_bd: {
+    "bn-bd": {
         "lang": "বাংলা",
         "about": "সম্পর্কে",
         "active files": "সক্রিয় ফাইল",
@@ -701,7 +701,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    cs_cz: {
+    "cs-cz": {
         "lang": "Čeština",
         "about": "obecně",
         "active files": "Otevřené soubory",
@@ -935,7 +935,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    de_de: {
+    "de-de": {
         "lang": "Deutsch",
         "about": "über",
         "active files": "Aktive Dateien",
@@ -1169,7 +1169,7 @@ var languages = {
         "no suggestions": "Keine Vorschläge",
         "no suggestions aggressive": "Keine aufdringlichen Vorschläge"
     },
-    en_us: {
+    "en-us": {
         "lang": "English",
         "about": "About",
         "active files": "Active files",
@@ -1403,7 +1403,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    es_sv: {
+    "es-sv": {
         "lang": "Español (by DouZerr)",
         "about": "Información",
         "active files": "Archivos Activos",
@@ -1637,7 +1637,7 @@ var languages = {
         "no suggestions": "No hay sugerencias",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    fr_fr: {
+    "fr-fr": {
         "lang": "Français",
         "about": "À propos",
         "active files": "Fichiers actifs",
@@ -1871,7 +1871,7 @@ var languages = {
         "no suggestions": "Aucune suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    hi_in: {
+    "hi-in": {
         "lang": "हिंदी",
         "about": "एप्लीकेशन के बारे में",
         "active files": "सक्रिय फ़ाइलें",
@@ -2106,7 +2106,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    hu_hu: {
+    "hu-hu": {
         "lang": "Magyar",
         "about": "névjegy",
         "active files": "Megnyitott fájlok",
@@ -2340,7 +2340,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    id_id: {
+    "id-id": {
         "lang": "Indonesian",
         "about": "tentang",
         "active files": "file aktif",
@@ -2576,7 +2576,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    ir_fa: {
+    "ir-fa": {
         "lang": "فارسی - ترجمه صفا صفری",
         "about": "درباره ما",
         "active files": "فایلهای فعال",
@@ -2811,7 +2811,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    it_it: {
+    "it-it": {
         "lang": "Italiano",
         "about": "Chi siamo",
         "active files": "File aperti",
@@ -3045,7 +3045,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    ja_jp: {
+    "ja-jp": {
         "lang": "日本語 (by wappo56 / fj68)",
         "about": "Acode editor",
         "active files": "アクティブファイル",
@@ -3279,7 +3279,7 @@ var languages = {
         "no suggestions": "候補を表示しない",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    kr_ko: {
+    "kr-ko": {
         "lang": "한국어",
         "about": "정보",
         "active files": "활성파일",
@@ -3513,7 +3513,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    ml_in: {
+    "ml-in": {
         "lang": "മലയാളം",
         "about": "കുറിച്ച്‌",
         "active files": "സജീവ ഫയലുകൾ",
@@ -3747,7 +3747,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    mm_unicode: {
+    "mm-unicode": {
         "lang": "ဗမာစာ (Unicode)",
         "about": "ကျွန်တော်တို့အကြောင်း",
         "active files": "လက်ရှိဖိုင်များ",
@@ -3981,7 +3981,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    mm_zawgyi: {
+    "mm-zawgyi": {
         "lang": "ဗမာစာ (Zawgyi)",
         "about": "ကြၽန္ေတာ္တို႔အေၾကာင္း",
         "active files": "လက္ရွိဖိုင္မ်ား",
@@ -4215,7 +4215,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    pl_pl: {
+    "pl-pl": {
         "lang": "Polski",
         "about": "o aplikacji",
         "active files": "Aktywne pliki",
@@ -4449,7 +4449,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    pt_br: {
+    "pt-br": {
         "lang": "Português (Brasil)",
         "about": "Sobre",
         "active files": "Arquivos ativos",
@@ -4684,7 +4684,7 @@ var languages = {
         "no suggestions": "Nenhuma sugestão",
         "no suggestions aggressive": "Nenhuma sugestão agressiva"
     },
-    pu_in: {
+    "pu-in": {
         "lang": "Punjabi (ਪੰਜਾਬੀ) by NiceSapien",
         "about": "Acode ਬਾਰੇ",
         "active files": "ਸਰਗਰਮ ਫਾਇਲ",
@@ -4918,7 +4918,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    ru_ru: {
+    "ru-ru": {
         "lang": "Русский",
         "about": "О приложении",
         "active files": "Открытые файлы",
@@ -5153,7 +5153,7 @@ var languages = {
         "no suggestions": "Нет предложений",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    tr_tr: {
+    "tr-tr": {
         "lang": "Türkçe (by ibrahim)",
         "about": "Hakkında",
         "active files": "Aktif Dosyalar",
@@ -5387,7 +5387,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    uk_ua: {
+    "uk-ua": {
         "lang": "Українська - перекладено by uHTpoBepT",
         "about": "Про програму",
         "active files": "Відкриті файли",
@@ -5622,7 +5622,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    uz_uz: {
+    "uz-uz": {
         "lang": "O'zbekcha (by TILON)",
         "about": "Ilova haqida",
         "active files": "Faol fayllar",
@@ -5856,7 +5856,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    vi_vn: {
+    "vi-vn": {
         "lang": "Vietnamese (by Nguyen Phat)",
         "about": "thông tin",
         "active files": "Kích Hoạt Tệp",
@@ -6090,7 +6090,7 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
-    zh_cn: {
+    "zh-cn": {
         "lang": "中文简体",
         "about": "关于",
         "active files": "活动文件",
@@ -6325,7 +6325,7 @@ var languages = {
         "no suggestions": "不显示建议",
         "no suggestions aggressive": "不显示激进建议"
     },
-    zh_hant: {
+    "zh-hant": {
         "lang": "繁體中文",
         "about": "關於",
         "active files": "編輯中的檔案",
@@ -6559,4 +6559,63 @@ var languages = {
         "no suggestions": "No suggestions",
         "no suggestions aggressive": "No suggestions aggressive"
     },
+}
+
+var langList = {
+    'en-us': 'English',
+    'es-sv': 'Español',
+    'fr-fr': 'Francais',
+    'de-de': 'Deutsch',
+    'id-id': 'Indonesian',
+    'uz-uz': "O'zbekcha",
+    'ru-ru': 'Русский',
+    'pl-pl': 'Polski',
+    'pt-br': 'Português',
+    'pu-in': "Punjabi (ਪੰਜਾਬੀ)",
+    'tr-tr': 'Türkçe',
+    'uk-ua': 'Українська',
+    'hi-in': 'हिंदी',
+    'zh-cn': '中文简体',
+    'zh-hant': '繁體中文',
+    'ir-fa': 'فارسی',
+    'ar-ye': 'العربية',
+    'ja-jp': '日本語',
+    'bn-bd': 'বাংলা',
+    'cs-cz': 'Čeština',
+    'vi-vn': 'Vietnamese',
+    'be-by': 'Беларуская',
+    'hu-hu': 'Magyar',
+    'ml-in': 'മലയാളം',
+    'mm-unicode': 'ဗမာစာ(Unicode)',
+    'mm-zawgyi': 'ဗမာစာ(Zawgyi)',
+    'ko-kr': '한국어',
+    'it-it': 'Italiano',
+}
+
+var langListMap = {
+    'en': 'en-us',
+    'fr': 'fr-fr',
+    'de': 'de-de',
+    'id': 'id-id',
+    'uz': 'uz-uz',
+    'ru': 'ru-ru',
+    'pl': 'pl-pl',
+    'pt': 'pt-br',
+    'pu': 'pu-in',
+    'tr': 'tr-tr',
+    'uk': 'uk-ua',
+    'hi': 'hi-in',
+    'zh': 'zh-cn',
+    'ir': 'ir-fa',
+    'ar': 'ar-ye',
+    'ja': 'ja-jp',
+    'bn': 'bn-bd',
+    'cs': 'cs-cz',
+    'vi': 'vi-vn',
+    'be': 'be-by',
+    'hu': 'hu-hu',
+    'ml': 'ml-in',
+    'mm': 'mm-unicode',
+    'ko': 'ko-kr',
+    'it': 'it-it',
 }
