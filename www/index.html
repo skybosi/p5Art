@@ -26,7 +26,7 @@
     </div>
     <div id="root" class="page primary top-bar" quicktools="enabled" footer-height="1">
         <ul id="fileList" class="open-file-list">
-            <li class="tile light">
+            <!-- <li class="tile light">
                 <i class="file file_type_html"></i>
                 <span class="text">index.html</span>
                 <span class="icon cancel" action=""></span>
@@ -40,21 +40,21 @@
                 <i class="file file_type_javascript" style="padding-right: 5px;"></i>
                 <span class="text">sketch.js</span>
                 <span class="icon cancel" action=""> </span>
-            </li>
+            </li> -->
         </ul>
         <header class="tile">
             <span class="text sub-text" id="tilte-text" data-subtext="javascript"
-                style="padding-left: 19px;">sketch.js</span>
+                style="padding-left: 7px;">sketch.js</span>
             <span class="icon add_circle" id="addFileCtrl" action="add-file" style="font-size: 1.5em;"></span>
             <span class="icon save" id="saveCtrl" action="run-file" data-file="sketch.js"
-                style="font-size: 1.5em;"></span>
+                style="font-size: 1.5em;padding-right: 7px;"></span>
             <span class="icon arrow_back" id="backCtrl" style="font-size: 1.5em !important;display: none;"
                 action=""></span>
             <span class="icon refresh" id="refreshCtrl" style="font-size: 1.5em !important;display: none;"
                 action=""></span>
             <span class="icon cut" id="cutSreenCtrl"
                 style="font-size: 1.4em !important;display: none;padding-right: 7px;" action=""></span>
-            <span class="icon more_vert" id="moreCtrl" action="toggle-menu"></span>
+            <span class="icon more_vert" id="moreCtrl" action="toggle-menu" style="display: none;"></span>
         </header>
         <main>
             <span class="preview icon play_arrow" id="previewCtrl" action="run-file" style="font-size: 1.5em;"></span>
@@ -76,7 +76,7 @@
                     <button id="redo" action="redo" class="icon redo" vibrate=""></button>
                 </div>
                 <div class="section">
-                    <button id="beautify" action="beautify" class="icon document-code" vibrate=""></button>
+                    <button id="beautify" action="beautify" class="icon code" vibrate=""></button>
                     <button id="search" action="search" id="find-tool" class="icon search"></button>
                     <button id="PgUp" class="icon arrow_upward"
                         style="font-size: 1.2em !important;text-transform: lowercase;" action="key">pu</button>
@@ -119,6 +119,13 @@
     <script src="./js/libs/scripts.js"></script>
     <script src="./index.js"></script>
     <script>
+        //js监听键盘ctrl+s快捷键保存
+        document.addEventListener('keydown', function (e) {
+            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+                e.preventDefault();
+                return false;
+            }
+        });
         document.onreadystatechange = function () {
             if (document.readyState === "complete") {
                 setTimeout(function () {

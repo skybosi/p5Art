@@ -9,8 +9,8 @@ if (language && language != "") {
         lang = language;
     } else if (langListMap[language] || langListMap[country]) {
         switch (language) {
-            case "zh": case "zh-ch":
-                lang = "zh-ch"
+            case "zh": case "zh-cn":
+                lang = "zh-cn"
                 break;
             case "zh-tw": case "zh-hk":
                 lang = "zh-hant"

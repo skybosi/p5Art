@@ -1,7 +1,7 @@
 const layouts = {
     "addFileLayout": `<div class="prompt">
         <span class="message scroll">{{enter file name}}</span>
-        <input class="input" placeholder="" type="text">
+        <input class="input" placeholder="|" value="" type="text">
         <span class="error-msg"> </span>
         <div class="button-container">
             <button action="" id="addfileCancel">{{cancel}}</button>
