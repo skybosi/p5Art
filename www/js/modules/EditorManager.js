@@ -1,7 +1,13 @@
 function EditorManager (selectedEditor) {
     console.log("load previewEvent");
     var forceRender = false;
-    var allCode = getCode();
+    var allCode = getCode(), lastValue = selectedEditor.getValue(), isChanged = false;
+    selectedEditor.container.oncontextmenu = function (e) {
+        e = e || window.event;
+        e.preventDefault();
+        console.log("oncontextmenu")
+        return false;
+    }
 
     // 按钮dom
     var saveCtrlElement = document.getElementById("saveCtrl");
@@ -71,16 +77,15 @@ function EditorManager (selectedEditor) {
                     function (e) {
                         // User gave us permission to his library, retry reading it!
                         console.log("requestAuthorization ok", e)
-                        saveImage(output.contentWindow._curElement.elt, "png")
-                            .then(() => {
-                                alter("已保存到相册")
-                            }).catch(e => {
-                                alter("保存相册失败")
-                            })
+                        saveImage("android", output.contentWindow._curElement.elt, "png").then(() => {
+                            toast("已保存到相册")
+                        }).catch(e => {
+                            toast("保存相册失败")
+                        })
                     },
                     function (err) {
                         console.log("requestAuthorization err", err)
-                        alter("保存相册失败")
+                        toast("保存相册失败")
                     }, // if options not provided, defaults to {read: true}.
                     {
                         read: true,
@@ -89,47 +94,11 @@ function EditorManager (selectedEditor) {
                 );
                 break;
             case "browser":
-                output.contentWindow.saveScreen();
-                setTimeout(() => { alter("保存成功") }, 300);
+                download(output.contentWindow._curElement.canvas.toDataURL(), `p5-${dateFormat("YYYY-mm-dd-HH-MM", new Date())}.jpg`)
                 break;
             default:
                 console.log("not support", cordova.platformId)
                 break;
-        }
-
-        function saveImage (canvas, extension, encoderOptions) {
-            return new Promise((resolve, reject) => {
-                let mimeType;
-                if (!extension) {
-                    extension = 'png';
-                    mimeType = 'image/png';
-                } else {
-                    switch (extension.toLowerCase()) {
-                        case 'png':
-                            mimeType = 'image/png';
-                            break;
-                        case 'jpeg': case 'jpg':
-                            mimeType = 'image/jpeg';
-                            break;
-                        default:
-                            mimeType = 'image/png';
-                            break;
-                    }
-                }
-                // file or remote URL. url can also be dataURL, but giving it a file path is much faster
-                var url = canvas.toDataURL(mimeType, encoderOptions);
-                var album = 'p5Art';
-                cordova.plugins.photoLibrary.saveImage(url, album,
-                    (libraryItem) => {
-                        console.log("saveImage", libraryItem)
-                        resolve("ok");
-                    },
-                    (err) => {
-                        console.log("saveImage err", err)
-                        reject(err)
-                    }
-                );
-            });
         }
     }
 
@@ -183,7 +152,13 @@ function EditorManager (selectedEditor) {
 
     // 文件内容变更
     selectedEditor.getSession().on("change", (e) => {
-        addNotice();
+        if (lastValue !== selectedEditor.getValue()) {
+            isChanged = true;
+            addNotice();
+        } else {
+            isChanged = false;
+            removeNotice();
+        }
     })
 
     // 文件保存
@@ -205,8 +180,10 @@ function EditorManager (selectedEditor) {
 
     // 添加变更提示点
     function addNotice () {
-        selectedEditor.target.classList.add("notice");
-        saveCtrlElement.classList.add("notice");
+        if (isChanged) {
+            selectedEditor.target.classList.add("notice");
+            saveCtrlElement.classList.add("notice");
+        }
     }
 
     // Preview the code that has written
@@ -262,8 +239,6 @@ function EditorManager (selectedEditor) {
                         break;
                 }
             }
-            var fileValue = "function save() { save('1.png'); }; window.saveScreen = save;"
-            newFrame.write(`<script>${fileValue}<\/script>`);
             frame.close();
         };
     }
@@ -298,9 +273,93 @@ function EditorManager (selectedEditor) {
         selectedEditor.session.setValue(fileValue);
         selectedEditor.selection.cursor.setPosition(1);
         removeNotice();
+        lastValue = fileValue;
         // 清理undo
         selectedEditor.getSession().getUndoManager().reset();
         selectedEditor.on("focus", updateFocus);
         window.selectedEditor = selectedEditor;
     }
+}
+
+function download (dataURL, filename) {
+    var blob = _dataURLToBlob(dataURL);
+    _saveFile(blob, filename);
+    function _dataURLToBlob (dataURL) {
+        var parts = dataURL.split(';base64,');
+        var contentType = parts[0].split(':')[1];
+        var raw = window.atob(parts[1]);
+        var rawLength = raw.length;
+        var uInt8Array = new Uint8Array(rawLength);
+        for (var i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+        return new Blob([uInt8Array], {
+            type: contentType
+        });
+    }
+    function _saveFile (data, filename) {
+        var url = window.URL.createObjectURL(data);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+}
+
+function saveImage (canvas, extension, encoderOptions) {
+    return new Promise((resolve, reject) => {
+        let mimeType;
+        if (!extension) {
+            extension = 'png';
+            mimeType = 'image/png';
+        } else {
+            switch (extension.toLowerCase()) {
+                case 'png':
+                    mimeType = 'image/png';
+                    break;
+                case 'jpeg': case 'jpg':
+                    mimeType = 'image/jpeg';
+                    break;
+                default:
+                    mimeType = 'image/png';
+                    break;
+            }
+        }
+        // file or remote URL. url can also be dataURL, but giving it a file path is much faster
+        var url = canvas.toDataURL(mimeType, encoderOptions);
+        var album = 'p5Art';
+        cordova.plugins.photoLibrary.saveImage(url, album,
+            (libraryItem) => {
+                console.log("saveImage", libraryItem)
+                resolve("ok");
+            },
+            (err) => {
+                console.log("saveImage err", err)
+                reject(err)
+            }
+        );
+    });
+}
+
+function dateFormat (fmt, date) {
+    let ret;
+    const opt = {
+        "Y+": date.getFullYear().toString(),        // 年
+        "m+": (date.getMonth() + 1).toString(),     // 月
+        "d+": date.getDate().toString(),            // 日
+        "H+": date.getHours().toString(),           // 时
+        "M+": date.getMinutes().toString(),         // 分
+        "S+": date.getSeconds().toString()          // 秒
+        // 有其他格式化字符需求可以继续添加，必须转化成字符串
+    };
+    for (let k in opt) {
+        ret = new RegExp("(" + k + ")").exec(fmt);
+        if (ret) {
+            fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+        };
+    };
+    return fmt;
 }

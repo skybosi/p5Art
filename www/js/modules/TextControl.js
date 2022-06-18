@@ -1,10 +1,11 @@
 function TextControl (editor, container) {
+    var { clipboard } = cordova.plugins;
     const $content = container.querySelector('.ace_scroller');
     var touchStartT = -1;
     var longTouchTimer;
     var position, position2;
     var row = 0, column = 0;
-    var clipboard = "";
+    var clipboardText = "";
     const threshold = 200;
     var contextMenuElement = document.getElementById("clipboard-contextmneu");
 
@@ -13,7 +14,7 @@ function TextControl (editor, container) {
         contextMenuElement = document.createElement("div");
         contextMenuElement.id = "clipboard-contextmneu";
         contextMenuElement.classList.add("clipboard-contextmneu");
-        contextMenuElement.style = `transform: translate3d(${x}px, ${y}px, 0px) scale(1);`;
+        contextMenuElement.style = `transform: translate3d(${x}px, ${y}px, 0px) scale(1);flex-direction: column;`;
         contextMenuElement.innerHTML = render(layouts["context-menu"]);
         document.body.appendChild(contextMenuElement);
 
@@ -27,26 +28,66 @@ function TextControl (editor, container) {
             selectedEditor.selection.anchor.setPosition(row, column);
             selectedEditor.selection.cursor.setPosition(row, column);
             contextMenuElement.remove()
+            selectedEditor.focus();
         }
 
         copyCtrlElement.onclick = (e) => {
-            var all = editor.getCopyText()
-            console.log(all)
-            clipboard = all;
-            recover()
+            clipboardAction('copy', selectedEditor);
+            // var text = editor.getCopyText()
+            // clipboardText = text;
+            // recover()
         }
         cutCtrlElement.onclick = (e) => {
-            recover()
+            clipboardAction('cut', selectedEditor);
+            // var text = editor.getCopyText()
+            // clipboardText = text;
+            // editor.insert("")
+            // recover()
         }
         pasteCtrlElement.onclick = (e) => {
-            if (clipboard && clipboard != "") {
-                editor.insert(clipboard)
-            }
-            clipboard = "";
-            recover()
+            clipboardAction('paste', selectedEditor);
+            // if (clipboardText && clipboardText != "") {
+            //     editor.insert(clipboardText)
+            // }
+            // clipboardText = "";
+            // recover()
         }
         selectAllCtrlElement.onclick = (e) => {
-            editor.selection.selectAll();
+            clipboardAction('select all', selectedEditor);
+            // editor.selection.selectAll();
+        }
+
+        function clipboardAction (action, editor) {
+            const selectedText = editor.getCopyText();
+            switch (action) {
+                case 'copy':
+                    if (selectedText) {
+                        clipboard.copy(selectedText);
+                        clipboardText = selectedText;
+                        toast(strings['copied to clipboard']);
+                    }
+                    recover();
+                    break;
+                case 'cut':
+                    if (selectedText) {
+                        clipboard.copy(selectedText);
+                        clipboardText = selectedText;
+                        const ranges = editor.selection.getAllRanges();
+                        ranges.map((range) => editor.remove(range));
+                        toast(strings['copied to clipboard']);
+                    }
+                    recover();
+                    break;
+                case 'paste':
+                    if (clipboardText && clipboardText != "") {
+                        editor.insert(clipboardText)
+                    }
+                    recover();
+                    break;
+                case 'select all':
+                    editor.selection.selectAll();
+                    break;
+            }
         }
     }
 
@@ -93,7 +134,9 @@ function TextControl (editor, container) {
 
     function touchStart (e) {
         if (contextMenuElement) contextMenuElement.remove();
-        position = mousePosition(e); // getPosition();
+        // 获取点击位置
+        getPosition();
+        position = mousePosition(e);
         var t = e.timeStamp;
         var touches = e.touches || [];
         // 避免多指操作
@@ -110,12 +153,15 @@ function TextControl (editor, container) {
             clearTimeout(longTouchTimer);
             longTouchTimer = null;
         }
-        position2 = mousePosition(e); // getPosition();
+        // 获取点击位置
+        getPosition();
+        position2 = mousePosition(e);
     }
 
     function touchEnd (e) {
         var t = e.timeStamp, shake = true;
-        if (Math.abs(position.x - position2.x) > 5 || Math.abs(position.y - position2.y) > 5) {
+        if (position && position2 && (Math.abs(position.x - position2.x) > 5 ||
+            Math.abs(position.y - position2.y) > 5)) {
             shake = false
         }
         if (t - touchStartT > threshold && shake) {
@@ -125,6 +171,8 @@ function TextControl (editor, container) {
         } else {
             clearTimeout(longTouchTimer);
             longTouchTimer = null;
+            position = null;
+            position2 = null;
         }
     }
 

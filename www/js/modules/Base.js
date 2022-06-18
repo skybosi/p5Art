@@ -11,15 +11,15 @@ function updateFocus () {
     isFocused = true;
 }
 
-function alter (tip) {
-    var alterItem = document.createElement("div");
-    alterItem.classList.add("prompt")
-    alterItem.style = "width:auto;min-width:30%;max-width: 80%;top:80%;z-index:10000000;font-size:14px;"
-    alterItem.innerHTML = `<div style="text-align: center;padding: 6px;">
+function toast (tip) {
+    var toastItem = document.createElement("div");
+    toastItem.classList.add("prompt")
+    toastItem.style = "width:auto;min-width:30%;max-width: 80%;top:80%;z-index:10000000;font-size:14px;"
+    toastItem.innerHTML = `<div style="text-align: center;padding: 6px;">
         <span class="message">${tip}</span>
     </div>`
-    document.body.appendChild(alterItem)
+    document.body.appendChild(toastItem)
     setTimeout(() => {
-        alterItem.remove();
+        toastItem.remove();
     }, 2000);
 }

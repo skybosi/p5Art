@@ -1045,7 +1045,7 @@ textarea::placeholder {
 }
 
 .clipboard-contextmneu>span:not(:last-child) {
-    border-right: solid 0.5px currentColor;
+    border-bottom: solid 0.5px currentColor;
 }
 
 .clipboard-contextmneu>span.disabled {

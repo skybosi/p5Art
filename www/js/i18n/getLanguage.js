@@ -3,12 +3,19 @@ var strings = {}
 navigator.globalization.getPreferredLanguage(
     (language) => {
         // This will display your device language
-        var l = "zh_cn";
+        var lang = "zh_cn";
         if (language && language.value) {
-            l = language.value.toLowerCase().replace("-", "_");
+            lang = language.value.toLowerCase().replace("-", "_");
         }
-        strings = languages[`${l}`];
-        console.log('language --', l, language, strings);
+        if (strings.uselang && languages[strings.uselang]) {
+            lang = strings.uselang;
+            strings = languages[strings.uselang];
+            strings.uselang = lang;
+        } else {
+            strings = languages[`${lang}`];
+            strings.uselang = lang;
+        }
+        console.log('language --', lang, language, strings);
     },
     null
 );
