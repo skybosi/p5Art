@@ -10,7 +10,7 @@ const layouts = {
     </div>`,
     // 添加文件
     "openFile": `<i class="file file_type_{{file type}}" style="padding-right: 5px;"></i>
-<span class="text">{{file name}}</span>
+<span class="text file-name">{{file name}}</span>
 <span class="icon cancel" action=""></span>`,
     // 搜索框
     "search": `<div class='button-container' id='search_row1'>
