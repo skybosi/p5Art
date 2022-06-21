@@ -23,8 +23,7 @@ function EditorManager (selectedEditor) {
     var cutSreenCtrlElement = document.getElementById("cutSreenCtrl");
     var addfileCtrlElement = document.getElementById("addFileCtrl");
     var moreCtrlElement = document.getElementById("moreCtrl");
-    var activeFile = document.querySelector(".active");
-    selectedEditor.target = activeFile;
+    selectedEditor.active = document.querySelector(".active");
 
     // 文件列表
     const fileList = document.getElementById("fileList");
@@ -74,6 +73,7 @@ function EditorManager (selectedEditor) {
         if (output) output.style.visibility = "hidden";
     }
 
+    // 截屏事件
     cutSreenCtrlElement.onclick = (e) => {
         var output = document.querySelector(".output");
         console.log("cordova:", cordova)
@@ -129,59 +129,67 @@ function EditorManager (selectedEditor) {
         document.body.appendChild(modalItem);
 
         modalItem.addEventListener("click", (e) => {
-            addFileItem.remove();
-            modalItem.remove();
+            destroy(addFileItem, modalItem);
         })
 
-        var inputEle = addFileItem.getElementsByTagName("input")[0];
-        inputEle.focus();
+        var inputElement = addFileItem.getElementsByTagName("input")[0];
+        inputElement.focus();
         addFileItem.querySelectorAll("button").forEach((child) => {
             child.onclick = (e) => {
                 switch (child.id) {
                     case "addfileCancel":
-                        addFileItem.remove();
-                        modalItem.remove();
+                        destroy(addFileItem, modalItem)
                         break
                     case "addfileSubmit":
-                        var filename = inputEle.value.trim(), file = {}, isExist = false;
-                        if (!filename || filename == "") {
-                            addFileItem.getElementsByClassName("error-msg")[0].innerText = strings["required"];
-                            break
-                        } else if (allCode[filename]) {
-                            isExist = true;
-                            if (allCode[filename].hidden != 1) {
-                                addFileItem.getElementsByClassName("error-msg")[0].innerText = strings["file exists"];
-                                break
-                            }
-                            file = {
-                                "type": allCode[filename].type,
-                                "value": allCode[filename].value,
-                            }
-                        } else {
-                            var fileType = getFileSuffix(filename) || 'file';
-                            file = {
-                                "type": fileType,
-                                "value": "",
-                            }
-                        }
-                        addFileLayout(filename, file.type, file.value);
-                        allCode = saveCode(filename, file.type, file.value);
-                        // 新增暂存的文件
-                        allCodeTmp[filename] = file;
-                        // 移动位置
-                        setTimeout(() => {
-                            fileList.scrollLeft += 200;
-                            addFileItem.remove();
-                            modalItem.remove();
-                            changeEditor(filename)
-                            if (isExist) {
-                                alert(strings["remember opened files"])
-                            }
-                        }, 150)
+                        addfileSubmit(addFileItem, inputElement.value.trim())
                         break
                 }
             };
         });
+
+        function destroy (addFileItem, modalItem) {
+            addFileItem.remove();
+            modalItem.remove();
+        }
+
+        function addfileSubmit (addFileItem, filename, modalItem) {
+            var file = {}, isExist = false;
+            if (!filename || filename == "") {
+                addFileItem.getElementsByClassName("error-msg")[0].innerText = strings["required"];
+                return
+            } else if (allCode[filename]) {
+                isExist = true;
+                // 存在且已经打开
+                if (allCode[filename].hidden != 1) {
+                    addFileItem.getElementsByClassName("error-msg")[0].innerText = strings["file exists"];
+                    return
+                }
+                file = {
+                    "type": allCode[filename].type,
+                    "value": allCode[filename].value,
+                }
+            } else {
+                var fileType = getFileSuffix(filename) || "file";
+                file = {
+                    "type": fileType,
+                    "value": "",
+                }
+            }
+            // 添加fileItem
+            addFileLayout(filename, file.type, file.value);
+            allCode = saveCode(filename, file.type, file.value);
+            // 新增暂存的文件
+            allCodeTmp[filename] = file;
+            // 移动位置
+            setTimeout(() => {
+                fileList.scrollLeft += 200;
+                destroy(addFileItem, modalItem);
+                changeEditor(addFileItem, filename)
+                if (isExist) {
+                    alert(strings["remember opened files"])
+                }
+            }, 150)
+        }
     }
 
     // 更多设置
@@ -224,7 +232,7 @@ function EditorManager (selectedEditor) {
     }
 
     //js监听键盘ctrl+s快捷键保存
-    selectedEditor.container.addEventListener('keydown', function (e) {
+    selectedEditor.container.addEventListener("keydown", function (e) {
         if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
             e.preventDefault();
             saveCtrlElement.click()
@@ -237,13 +245,8 @@ function EditorManager (selectedEditor) {
         var fileListNav = fileList.querySelectorAll(".open-file-list li");
         fileListNav.forEach((child) => {
             child.onclick = (e) => {
-                if (!activeFile.isEqualNode(e.currentTarget)) {
-                    activeFile.classList.remove("active");
-                    e.currentTarget.classList.add("active");
-                    selectedEditor.target = e.currentTarget;
-                }
                 var fileName = child.getElementsByClassName("file-name")[0].innerText;
-                changeEditor(fileName);
+                changeEditor(child, fileName);
             };
 
             child.getElementsByClassName("cancel")[0].onclick = (e) => {
@@ -299,33 +302,37 @@ function EditorManager (selectedEditor) {
                 } else { // 中间的，往后取
                     newFileItem = child.nextElementSibling
                 }
-                newFileItem.classList.add("active")
-                selectedEditor.target = newFileItem;
                 fileName = newFileItem.getElementsByClassName("file-name")[0].innerText;
             }
-            updateSelectEditor(fileName)
+            updateSelectEditor(newFileItem, fileName)
         } catch (error) {
             console.log(error)
         }
         child.remove()
     }
 
+    // 更新active fileItem
+    function updateActiveFile (activeFileItem) {
+        if (selectedEditor.active && selectedEditor.active.classList) {
+            selectedEditor.active.classList.remove("active")
+        }
+        selectedEditor.active = activeFileItem;
+        if (activeFileItem && activeFileItem.classList) {
+            selectedEditor.active.classList.add("active")
+        }
+    }
+
     // 添加文件项的到dome
     function addFileLayout (fileName, fileType, fileValue) {
-        if (activeFile && activeFile.classList) {
-            activeFile.classList.remove("active");
-        }
         var fileItem = document.createElement("li");
         fileItem.classList.add("tile", "light", "active");
         fileItem.innerHTML = render(layouts["openFile"], {
             "file name": fileName,
             "file type": fileType,
         });
-        activeFile = fileItem;
         fileList.appendChild(fileItem);
-        selectedEditor.target = activeFile;
 
-        updateSelectEditor(fileName, fileType, fileValue);
+        updateSelectEditor(fileItem, fileName, fileType, fileValue);
         registFileList(fileList);
     }
 
@@ -334,11 +341,11 @@ function EditorManager (selectedEditor) {
         var list = Object.keys(allFile), newList = [];
         for (let i = 0; i < list.length; i++) {
             const filename = list[i];
-            if (filename.indexOf('html') > 0) {
+            if (filename.indexOf("html") > 0) {
                 newList.unshift(filename)
-            } else if (filename.indexOf('css') > 0) {
+            } else if (filename.indexOf("css") > 0) {
                 newList.push(filename)
-            } else if (filename.indexOf('js') > 0) {
+            } else if (filename.indexOf("js") > 0) {
                 newList.push(filename)
             } else {
                 newList.push(filename)
@@ -348,7 +355,7 @@ function EditorManager (selectedEditor) {
         for (let i = 0; i < newList.length; i++) {
             const filename = newList[i];
             if (allFile[filename] && allFile[filename].hidden != 1) {
-                var fileType = getFileSuffix(filename) || 'file',
+                var fileType = getFileSuffix(filename) || "file",
                     fileValue = allCode[filename].value;
                 addFileLayout(filename, fileType, fileValue);
             }
@@ -374,12 +381,12 @@ function EditorManager (selectedEditor) {
     // 删除变更提示点
     function removeNotice () {
         saveCtrl.classList.remove("notice");;
-        selectedEditor.target.classList.remove("notice");
+        selectedEditor.active.classList.remove("notice");
     }
 
     // 添加变更提示点
     function addNotice () {
-        selectedEditor.target.classList.add("notice");
+        selectedEditor.active.classList.add("notice");
         saveCtrlElement.classList.add("notice");
     }
 
@@ -451,7 +458,7 @@ function EditorManager (selectedEditor) {
     }
 
     // 更新SelectEditor
-    function updateSelectEditor (fileName, fileType, fileValue) {
+    function updateSelectEditor (activeFileItem, fileName, fileType, fileValue) {
         if (!fileName || fileName == "") {
             fileName = ""
             fileType = null
@@ -478,11 +485,13 @@ function EditorManager (selectedEditor) {
         selectedEditor.fileName = fileName;
         selectedEditor.fileType = fileType;
         selectedEditor.session.setValue(fileValue);
-        selectedEditor.selection.cursor.setPosition(1);
+        selectedEditor.selection.cursor.setPosition(0);
+        // update activeFileItem
+        updateActiveFile(activeFileItem)
     }
 
     // 切换tab的文件
-    function changeEditor (fileName) {
+    function changeEditor (activeFileItem, fileName) {
         selectedEditor.off("focus", updateFocus);
         const output = document.querySelector(".output");
         if (output) output.style.visibility = "hidden";
@@ -493,10 +502,10 @@ function EditorManager (selectedEditor) {
         var oldfile = allCode[fileName];
 
         // 更新SelectEditor
-        updateSelectEditor(fileName, file.type, file.value)
+        updateSelectEditor(activeFileItem, fileName, file.type, file.value)
 
         // 检测是否变化
-        isChanged = checkChanged(file.value, oldfile.value);
+        isChanged = checkChanged(oldfile.value, file.value);
         if (isChanged) {
             console.log("hhhhhhhhhhhhhhhhhhhhhhh")
         }
@@ -512,8 +521,8 @@ function EditorManager (selectedEditor) {
         var blob = _dataURLToBlob(dataURL);
         saveFile(blob, filename);
         function _dataURLToBlob (dataURL) {
-            var parts = dataURL.split(';base64,');
-            var contentType = parts[0].split(':')[1];
+            var parts = dataURL.split(";base64,");
+            var contentType = parts[0].split(":")[1];
             var raw = window.atob(parts[1]);
             var rawLength = raw.length;
             var uInt8Array = new Uint8Array(rawLength);
@@ -529,10 +538,10 @@ function EditorManager (selectedEditor) {
     // 保存文件
     function saveFile (data, filename) {
         var url = window.URL.createObjectURL(data);
-        var a = document.createElement('a');
+        var a = document.createElement("a");
         a.href = url;
         a.download = filename;
-        a.style.display = 'none';
+        a.style.display = "none";
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -543,24 +552,24 @@ function EditorManager (selectedEditor) {
         return new Promise((resolve, reject) => {
             let mimeType;
             if (!extension) {
-                extension = 'png';
-                mimeType = 'image/png';
+                extension = "png";
+                mimeType = "image/png";
             } else {
                 switch (extension.toLowerCase()) {
-                    case 'png':
-                        mimeType = 'image/png';
+                    case "png":
+                        mimeType = "image/png";
                         break;
-                    case 'jpeg': case 'jpg':
-                        mimeType = 'image/jpeg';
+                    case "jpeg": case "jpg":
+                        mimeType = "image/jpeg";
                         break;
                     default:
-                        mimeType = 'image/png';
+                        mimeType = "image/png";
                         break;
                 }
             }
             // file or remote URL. url can also be dataURL, but giving it a file path is much faster
             var url = canvas.toDataURL(mimeType, encoderOptions);
-            var album = 'p5Art';
+            var album = "p5Art";
             cordova.plugins.photoLibrary.saveImage(url, album,
                 (libraryItem) => {
                     console.log("saveImage", libraryItem)
