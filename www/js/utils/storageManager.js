@@ -148,7 +148,7 @@
             }
         }
         const { css, js, js2, html } = defaultValue;
-        console.log("code", css, js, html);
+        // console.log("code", css, js, html);
         saveCode("index.css", "css", css);
         saveCode("sketch.js", "javascript", js);
         saveCode("index.html", "html", html);

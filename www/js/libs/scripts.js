@@ -34,7 +34,6 @@
             jsScript.onload = function (e) {
                 scripts.forEach(script => {
                     const jsScript = document.createElement("script");
-                    console.log("jsScript", jsScript)
                     jsScript.src = script;
                     jsScript.async = true;
                     body.appendChild(jsScript);

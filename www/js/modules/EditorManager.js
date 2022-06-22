@@ -1,5 +1,4 @@
 function EditorManager (selectedEditor) {
-    console.log("load previewEvent");
     const prettier = require("ace/ext/beautify");
 
     var forceRender = false;
@@ -10,7 +9,6 @@ function EditorManager (selectedEditor) {
     selectedEditor.container.oncontextmenu = function (e) {
         e = e || window.event;
         e.preventDefault();
-        console.log("oncontextmenu")
         return false;
     }
 
@@ -47,6 +45,7 @@ function EditorManager (selectedEditor) {
             }
         }
         // 显示返回页面
+        window.debuger.style.display = "none"
         beautifyCtrlElement.style.display = "none";
         saveCtrlElement.style.display = "none";
         addfileCtrlElement.style.display = "none";
@@ -60,6 +59,7 @@ function EditorManager (selectedEditor) {
 
     // 返回事件 TODO
     backCtrlElement.onclick = (e) => {
+        window.debuger.style.display = ""
         beautifyCtrlElement.style.display = "";
         saveCtrlElement.style.display = "";
         addfileCtrlElement.style.display = "";
@@ -76,37 +76,56 @@ function EditorManager (selectedEditor) {
     // 截屏事件
     cutSreenCtrlElement.onclick = (e) => {
         var output = document.querySelector(".output");
-        console.log("cordova:", cordova)
         console.log("cordova platformId:", cordova.platformId)
         switch (cordova.platformId) {
             case "android":
-                cordova.plugins.photoLibrary.requestAuthorization(
-                    function (e) {
-                        // User gave us permission to his library, retry reading it!
-                        console.log("requestAuthorization ok", e)
+                requestAuthorization().then(res => {
+                    saveImage(output.contentWindow._curElement.elt, "png").then(() => {
+                        toast(strings["save"] + strings["success"])
+                    }).catch(err => {
+                        console.error("saveImage error:", err)
+                        toast(strings["save"] + strings["failed"])
+                    })
+                }).catch(err => {
+                    requestAuthorization().then(res => {
                         saveImage(output.contentWindow._curElement.elt, "png").then(() => {
-                            toast("已保存到相册")
-                        }).catch(e => {
-                            console.log("saveImage error:", e)
-                            toast("保存相册失败")
+                            toast(strings["save"] + strings["success"])
+                        }).catch(err => {
+                            console.error("saveImage error:", err)
+                            toast(strings["save"] + strings["failed"])
                         })
+                    }).catch(err => {
+                        console.error("requestAuthorization err", err)
+                        toast(strings["permission denied"])
+                    })
+                })
+                break;
+            case "browser":
+                download(output.contentWindow._curElement.canvas.toDataURL(), `p5-${dateFormat("YYYY-mm-dd-HH-MM", new Date())}.jpg`)
+                toast(strings["save"] + strings["success"])
+                break;
+            default:
+                console.warn("not support", cordova.platformId)
+                break;
+        }
+
+        function requestAuthorization () {
+            return new Promise((resolve, reject) => {
+                cordova.plugins.photoLibrary.requestAuthorization(
+                    function (res) {
+                        // User gave us permission to his library, retry reading it!
+                        console.debug("requestAuthorization ok", res)
+                        resolve(res)
                     },
                     function (err) {
-                        console.log("requestAuthorization err", err)
-                        toast("保存相册失败")
+                        reject(err)
                     }, // if options not provided, defaults to {read: true}.
                     {
                         read: true,
                         write: true
                     }
                 );
-                break;
-            case "browser":
-                download(output.contentWindow._curElement.canvas.toDataURL(), `p5-${dateFormat("YYYY-mm-dd-HH-MM", new Date())}.jpg`)
-                break;
-            default:
-                console.log("not support", cordova.platformId)
-                break;
+            })
         }
     }
 
@@ -205,7 +224,7 @@ function EditorManager (selectedEditor) {
         document.body.appendChild(moreItem);
         moreItem.querySelectorAll("li").forEach((child) => {
             child.onclick = (e) => {
-                console.log(e, e.target.innerHTML);
+                console.debug(e, e.target.innerHTML);
             };
         });
     }
@@ -227,6 +246,11 @@ function EditorManager (selectedEditor) {
         saveCtrl.dataset["type"] = selectedEditor.fileType;
         saveCtrl.dataset["file"] = selectedEditor.fileName;
         allCode = saveCode(selectedEditor.fileName, selectedEditor.fileType, curValue);
+        allCodeTmp[selectedEditor.fileName] = {
+            "type": selectedEditor.fileType,
+            "value": curValue,
+        }
+        lastValue = curValue;
         removeNotice();
         forceRender = true;
     }
@@ -263,7 +287,7 @@ function EditorManager (selectedEditor) {
                                 console.log(strings["ok"] + strings["delete"] + "?");
                             }
                         }
-                        removeCode(selectedEditor.fileName);
+                        allCode = removeCode(selectedEditor.fileName);
                         removeFileLayout(child, fileList)
                     }
                 }, {
@@ -306,7 +330,7 @@ function EditorManager (selectedEditor) {
             }
             updateSelectEditor(newFileItem, fileName)
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
         child.remove()
     }
@@ -405,7 +429,6 @@ function EditorManager (selectedEditor) {
         output.className = "output";
         output.frameBorder = 0;
         const frame = output.contentDocument;
-        console.log(output);
         const newFrame = frame.open();
         const erudaScript = document.createElement("script");
         const erudaInit = document.createElement("script");
@@ -441,7 +464,7 @@ function EditorManager (selectedEditor) {
                         newFrame.write(`<script>${fileValue}<\/script>`);
                         break;
                     default:
-                        console.log("error file type!");
+                        console.error("error file type!");
                         break;
                 }
             }
@@ -469,7 +492,7 @@ function EditorManager (selectedEditor) {
                 fileType = getFileSuffix(fileName) || "file"
                 var file = allCode[fileName];
                 if (!file || !file.value) {
-                    console.log("updateSelectEditor error!", fileName)
+                    console.error("updateSelectEditor error!", fileName)
                     return
                 }
                 fileValue = file.value;
@@ -482,12 +505,12 @@ function EditorManager (selectedEditor) {
             selectedEditor.session.setMode(`ace/mode/${fileType}`)
         }
         lastValue = fileValue;
+        // update activeFileItem
+        updateActiveFile(activeFileItem)
         selectedEditor.fileName = fileName;
         selectedEditor.fileType = fileType;
         selectedEditor.session.setValue(fileValue);
         selectedEditor.selection.cursor.setPosition(0);
-        // update activeFileItem
-        updateActiveFile(activeFileItem)
     }
 
     // 切换tab的文件
@@ -506,12 +529,11 @@ function EditorManager (selectedEditor) {
 
         // 检测是否变化
         isChanged = checkChanged(oldfile.value, file.value);
-        if (isChanged) {
-            console.log("hhhhhhhhhhhhhhhhhhhhhhh")
+        if (!isChanged) {
+            selectedEditor.getSession().getUndoManager().reset();
         }
         lastValue = oldfile.value;
         // 清理undo
-        selectedEditor.getSession().getUndoManager().reset();
         selectedEditor.on("focus", updateFocus);
         window.selectedEditor = selectedEditor;
     }
@@ -571,12 +593,12 @@ function EditorManager (selectedEditor) {
             var url = canvas.toDataURL(mimeType, encoderOptions);
             var album = "p5Art";
             cordova.plugins.photoLibrary.saveImage(url, album,
-                (libraryItem) => {
-                    console.log("saveImage", libraryItem)
+                (res) => {
+                    console.log("saveImage", res)
                     resolve("ok");
                 },
                 (err) => {
-                    console.log("saveImage err", err)
+                    console.error("saveImage err", err)
                     reject(err)
                 }
             );

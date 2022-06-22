@@ -9,6 +9,7 @@
     <title>Mobile Code Editor | Ace</title>
     <script src="cordova.js"></script>
     <script src="./js/i18n/languages.js"></script>
+    <script src="./js/libs/eruda/eruda-2.4.1.js"></script>
     <link rel="stylesheet" href="./style/style.css" />
     <link rel="stylesheet" href="./style/main.css" />
     <link rel="stylesheet" href="./res/icon-file/style.css">
@@ -111,6 +112,7 @@
                     <button id="@" action="key" value="@">@</button>
                 </div>
             </div>
+            <div id="eruda-debuger"></div>
         </footer>
     </div>
     <script src="./js/p5/p5_autocomplete.js"></script>
@@ -137,6 +139,15 @@
                 }, 1000);
             }
         }
+        // 初始化调试
+        window.debuger = document.getElementById('eruda-debuger');
+        eruda.init({
+            container: window.debuger,
+            tool: ["console", "elements", "network", "resources", "sources", "info"],
+            defaults: {
+                displaySize: 60
+            }
+        })
     </script>
 </body>
 

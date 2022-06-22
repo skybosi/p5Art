@@ -2,7 +2,7 @@
     try {
         await aceLoaded();
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
 
     function loadAce () {
@@ -22,7 +22,7 @@
                 theme: "ace/theme/monokai",
                 useSoftTabs: false,
             });
-            console.log(editor)
+            // console.log(editor)
             LoadAutoComplete();
             editor.commands.removeCommand("showSettingsMenu");
             editor.setShowPrintMargin(false);
