@@ -38,7 +38,7 @@ function deepClone(o) {
         return o
     } else if (Array.isArray(o)) { // 如果是数组，则定义一个新数组，完成复制后返回
         // 注意，这里判断数组不能用typeof，因为typeof Array 返回的是object
-        console.log(typeof [])  // --> object
+        // console.log(typeof [])  // --> object
         var _arr = []
         o.forEach(item => { _arr.push(item) })
         return _arr

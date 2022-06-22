@@ -1,7 +1,7 @@
 var strings = {}
 
 var language = navigator.language.toLowerCase()
-var country = language.split('-')[0] || "en"
+var country = language.split("-")[0] || "en"
 
 var lang = "en-us";
 if (language && language != "") {
@@ -35,4 +35,4 @@ if (strings.uselang && languages[strings.uselang]) {
     strings = languages[`${lang}`] || languages["en-us"];
     strings.uselang = lang;
 }
-console.log('language --', lang, language, strings);
+console.log("language:", lang, language, strings);

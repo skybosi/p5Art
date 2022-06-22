@@ -1,5 +1,6 @@
 function EditorManager (selectedEditor) {
-    console.log("load previewEvent");
+    const prettier = require("ace/ext/beautify");
+
     var forceRender = false;
     var allCode = getCode(), //最新的被保存的
         allCodeTmp = deepClone(allCode), //暂存没有被保存的
@@ -8,11 +9,11 @@ function EditorManager (selectedEditor) {
     selectedEditor.container.oncontextmenu = function (e) {
         e = e || window.event;
         e.preventDefault();
-        console.log("oncontextmenu")
         return false;
     }
 
     // 按钮dom
+    var beautifyCtrlElement = document.getElementById("beautifyCtrl");
     var saveCtrlElement = document.getElementById("saveCtrl");
     var backCtrlElement = document.getElementById("backCtrl");
     var previewCtrlElement = document.getElementById("previewCtrl");
@@ -20,8 +21,7 @@ function EditorManager (selectedEditor) {
     var cutSreenCtrlElement = document.getElementById("cutSreenCtrl");
     var addfileCtrlElement = document.getElementById("addFileCtrl");
     var moreCtrlElement = document.getElementById("moreCtrl");
-    var activeFile = document.querySelector(".active");
-    selectedEditor.target = activeFile;
+    selectedEditor.active = document.querySelector(".active");
 
     // 文件列表
     const fileList = document.getElementById("fileList");
@@ -45,6 +45,8 @@ function EditorManager (selectedEditor) {
             }
         }
         // 显示返回页面
+        window.debuger.style.display = "none"
+        beautifyCtrlElement.style.display = "none";
         saveCtrlElement.style.display = "none";
         addfileCtrlElement.style.display = "none";
         // moreCtrlElement.style.display = "none";
@@ -57,48 +59,73 @@ function EditorManager (selectedEditor) {
 
     // 返回事件 TODO
     backCtrlElement.onclick = (e) => {
+        window.debuger.style.display = ""
+        beautifyCtrlElement.style.display = "";
         saveCtrlElement.style.display = "";
         addfileCtrlElement.style.display = "";
         // moreCtrlElement.style.display = "";
         backCtrlElement.style.display = "none";
         refreshCtrlElement.style.display = "none";
         cutSreenCtrlElement.style.display = "none";
-        changeEditor(selectedEditor.fileName);
+        // 隐藏preview
+        selectedEditor.off("focus", updateFocus);
+        const output = document.querySelector(".output");
+        if (output) output.style.visibility = "hidden";
     }
 
+    // 截屏事件
     cutSreenCtrlElement.onclick = (e) => {
         var output = document.querySelector(".output");
-        console.log("cordova:", cordova)
         console.log("cordova platformId:", cordova.platformId)
         switch (cordova.platformId) {
             case "android":
-                cordova.plugins.photoLibrary.requestAuthorization(
-                    function (e) {
-                        // User gave us permission to his library, retry reading it!
-                        console.log("requestAuthorization ok", e)
+                requestAuthorization().then(res => {
+                    saveImage(output.contentWindow._curElement.elt, "png").then(() => {
+                        toast(strings["save"] + strings["success"])
+                    }).catch(err => {
+                        console.error("saveImage error:", err)
+                        toast(strings["save"] + strings["failed"])
+                    })
+                }).catch(err => {
+                    requestAuthorization().then(res => {
                         saveImage(output.contentWindow._curElement.elt, "png").then(() => {
-                            toast("已保存到相册")
-                        }).catch(e => {
-                            console.log("saveImage error:", e)
-                            toast("保存相册失败")
+                            toast(strings["save"] + strings["success"])
+                        }).catch(err => {
+                            console.error("saveImage error:", err)
+                            toast(strings["save"] + strings["failed"])
                         })
+                    }).catch(err => {
+                        console.error("requestAuthorization err", err)
+                        toast(strings["permission denied"])
+                    })
+                })
+                break;
+            case "browser":
+                download(output.contentWindow._curElement.canvas.toDataURL(), `p5-${dateFormat("YYYY-mm-dd-HH-MM", new Date())}.jpg`)
+                toast(strings["save"] + strings["success"])
+                break;
+            default:
+                console.warn("not support", cordova.platformId)
+                break;
+        }
+
+        function requestAuthorization () {
+            return new Promise((resolve, reject) => {
+                cordova.plugins.photoLibrary.requestAuthorization(
+                    function (res) {
+                        // User gave us permission to his library, retry reading it!
+                        console.debug("requestAuthorization ok", res)
+                        resolve(res)
                     },
                     function (err) {
-                        console.log("requestAuthorization err", err)
-                        toast("保存相册失败")
+                        reject(err)
                     }, // if options not provided, defaults to {read: true}.
                     {
                         read: true,
                         write: true
                     }
                 );
-                break;
-            case "browser":
-                download(output.contentWindow._curElement.canvas.toDataURL(), `p5-${dateFormat("YYYY-mm-dd-HH-MM", new Date())}.jpg`)
-                break;
-            default:
-                console.log("not support", cordova.platformId)
-                break;
+            })
         }
     }
 
@@ -115,38 +142,73 @@ function EditorManager (selectedEditor) {
         addFileItem.innerHTML = render(layouts["addFileLayout"]);
         document.body.appendChild(addFileItem);
 
-        var inputEle = addFileItem.getElementsByTagName("input")[0];
-        inputEle.focus();
+        // 透明modal
+        var modalItem = document.createElement("div")
+        modalItem.style = "position: fixed;left: 0;top: 0;width: 100%;height: 100%;opacity: 0.5;background: #000;"
+        document.body.appendChild(modalItem);
+
+        modalItem.addEventListener("click", (e) => {
+            destroy(addFileItem, modalItem);
+        })
+
+        var inputElement = addFileItem.getElementsByTagName("input")[0];
+        inputElement.focus();
         addFileItem.querySelectorAll("button").forEach((child) => {
-            child.addEventListener("click", function (e) {
+            child.onclick = (e) => {
                 switch (child.id) {
                     case "addfileCancel":
-                        addFileItem.remove();
+                        destroy(addFileItem, modalItem)
                         break
                     case "addfileSubmit":
-                        var filename = inputEle.value;
-                        if (!filename || filename == "") {
-                            addFileItem.getElementsByClassName("error-msg")[0].innerText = strings["required"];
-                            break
-                        }
-                        var fileType = getFileSuffix(filename) || 'file';
-                        addFileLayout(filename, fileType);
-                        saveCode(filename, fileType, "");
-                        // 新增暂存的文件
-                        allCodeTmp[filename] = {
-                            "type": fileType,
-                            "value": "",
-                        }
-                        allCode = getCode();
-                        setTimeout(() => {
-                            fileList.scrollLeft += 200;
-                            addFileItem.remove();
-                            changeEditor(filename)
-                        }, 150)
+                        addfileSubmit(addFileItem, inputElement.value.trim())
                         break
                 }
-            });
+            };
         });
+
+        function destroy (addFileItem, modalItem) {
+            addFileItem.remove();
+            modalItem.remove();
+        }
+
+        function addfileSubmit (addFileItem, filename, modalItem) {
+            var file = {}, isExist = false;
+            if (!filename || filename == "") {
+                addFileItem.getElementsByClassName("error-msg")[0].innerText = strings["required"];
+                return
+            } else if (allCode[filename]) {
+                isExist = true;
+                // 存在且已经打开
+                if (allCode[filename].hidden != 1) {
+                    addFileItem.getElementsByClassName("error-msg")[0].innerText = strings["file exists"];
+                    return
+                }
+                file = {
+                    "type": allCode[filename].type,
+                    "value": allCode[filename].value,
+                }
+            } else {
+                var fileType = getFileSuffix(filename) || "file";
+                file = {
+                    "type": fileType,
+                    "value": "",
+                }
+            }
+            // 添加fileItem
+            addFileLayout(filename, file.type, file.value);
+            allCode = saveCode(filename, file.type, file.value);
+            // 新增暂存的文件
+            allCodeTmp[filename] = file;
+            // 移动位置
+            setTimeout(() => {
+                fileList.scrollLeft += 200;
+                destroy(addFileItem, modalItem);
+                changeEditor(addFileItem, filename)
+                if (isExist) {
+                    alert(strings["remember opened files"])
+                }
+            }, 150)
+        }
     }
 
     // 更多设置
@@ -161,9 +223,9 @@ function EditorManager (selectedEditor) {
         }
         document.body.appendChild(moreItem);
         moreItem.querySelectorAll("li").forEach((child) => {
-            child.addEventListener("click", function (e) {
-                console.log(e, e.target.innerHTML);
-            });
+            child.onclick = (e) => {
+                console.debug(e, e.target.innerHTML);
+            };
         });
     }
 
@@ -172,20 +234,29 @@ function EditorManager (selectedEditor) {
         isChanged = checkChanged(lastValue, selectedEditor.getValue())
     })
 
+    // 格式化代码
+    beautifyCtrlElement.onclick = (e) => {
+        prettier.beautify(selectedEditor.getSession());
+    }
+
     // 文件保存
     saveCtrlElement.onclick = (e) => {
         var saveCtrl = e.target;
         var curValue = selectedEditor.getValue();
         saveCtrl.dataset["type"] = selectedEditor.fileType;
         saveCtrl.dataset["file"] = selectedEditor.fileName;
-        saveCode(selectedEditor.fileName, selectedEditor.fileType, curValue);
-        allCode = getCode();
+        allCode = saveCode(selectedEditor.fileName, selectedEditor.fileType, curValue);
+        allCodeTmp[selectedEditor.fileName] = {
+            "type": selectedEditor.fileType,
+            "value": curValue,
+        }
+        lastValue = curValue;
         removeNotice();
         forceRender = true;
     }
 
     //js监听键盘ctrl+s快捷键保存
-    selectedEditor.container.addEventListener('keydown', function (e) {
+    selectedEditor.container.addEventListener("keydown", function (e) {
         if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
             e.preventDefault();
             saveCtrlElement.click()
@@ -193,36 +264,99 @@ function EditorManager (selectedEditor) {
         }
     });
 
-    // 获取文件项事件
+    // 注册文件项事件
     function registFileList (fileList) {
         var fileListNav = fileList.querySelectorAll(".open-file-list li");
         fileListNav.forEach((child) => {
-            child.addEventListener("click", function (e) {
-                activeFile.classList.remove("active");
-                this.classList.add("active");
-                var fileSpan = child.getElementsByClassName("text")[0];
-                changeEditor(fileSpan.innerText);
-            });
-            // child.getElementsByClassName("cancel")[0].addEventListener("click", (e) => {
-            //     child.remove();
-            // })
+            child.onclick = (e) => {
+                var fileName = child.getElementsByClassName("file-name")[0].innerText;
+                changeEditor(child, fileName);
+            };
+
+            child.getElementsByClassName("cancel")[0].onclick = (e) => {
+                dialog("文件管理", {
+                    content: strings["delete"],
+                    cb: (e) => {
+                        var dialogBody = e.baseNode;
+                        var errMsg = dialogBody.getElementsByClassName("error-msg")[0].innerText
+                        if (isChanged) {
+                            if (errMsg == "") {
+                                dialogBody.getElementsByClassName("error-msg")[0].innerText = strings["ok"] + strings["delete"] + "?";
+                                return false
+                            } else { // 再次确认删除
+                                console.log(strings["ok"] + strings["delete"] + "?");
+                            }
+                        }
+                        allCode = removeCode(selectedEditor.fileName);
+                        removeFileLayout(child, fileList)
+                    }
+                }, {
+                    content: strings["close file"],
+                    cb: (e) => {
+                        var dialogBody = e.baseNode;
+                        var errMsg = dialogBody.getElementsByClassName("error-msg")[0].innerText
+                        if (isChanged) {
+                            if (errMsg == "") {
+                                dialogBody.getElementsByClassName("error-msg")[0].innerText = strings["unsaved file"];
+                                return false
+                            } else { // 再次确认关闭
+                                console.log(strings["unsaved file"])
+                            }
+                        }
+                        hiddenCode(selectedEditor.fileName);
+                        removeFileLayout(child, fileList)
+                    }
+                })
+                // 阻止冒泡
+                e.stopPropagation();
+            }
         });
     }
 
-    // 添加文件项的到dome
-    function addFileLayout (fileName, fileType) {
-        if (activeFile && activeFile.classList) {
-            activeFile.classList.remove("active");
+    function removeFileLayout (child) {
+        try {
+            var newFileItem, fileName = "";
+            var parentElement = child.parentElement;
+            // 处理fileItem的dom删除
+            if (parentElement.children.length > 1) {
+                if (child.isEqualNode(parentElement.firstElementChild)) { // 第一个
+                    newFileItem = child.nextElementSibling
+                } else if (child.isEqualNode(parentElement.lastElementChild)) { // 最后一个
+                    newFileItem = child.previousSibling
+                } else { // 中间的，往后取
+                    newFileItem = child.nextElementSibling
+                }
+                fileName = newFileItem.getElementsByClassName("file-name")[0].innerText;
+            }
+            updateSelectEditor(newFileItem, fileName)
+        } catch (error) {
+            console.error(error)
         }
+        child.remove()
+    }
+
+    // 更新active fileItem
+    function updateActiveFile (activeFileItem) {
+        if (selectedEditor.active && selectedEditor.active.classList) {
+            selectedEditor.active.classList.remove("active")
+        }
+        selectedEditor.active = activeFileItem;
+        if (activeFileItem && activeFileItem.classList) {
+            selectedEditor.active.classList.add("active")
+        }
+    }
+
+    // 添加文件项的到dome
+    function addFileLayout (fileName, fileType, fileValue) {
         var fileItem = document.createElement("li");
         fileItem.classList.add("tile", "light", "active");
         fileItem.innerHTML = render(layouts["openFile"], {
             "file name": fileName,
             "file type": fileType,
         });
-        activeFile = fileItem;
         fileList.appendChild(fileItem);
-        selectedEditor.target = activeFile;
+
+        updateSelectEditor(fileItem, fileName, fileType, fileValue);
         registFileList(fileList);
     }
 
@@ -231,11 +365,11 @@ function EditorManager (selectedEditor) {
         var list = Object.keys(allFile), newList = [];
         for (let i = 0; i < list.length; i++) {
             const filename = list[i];
-            if (filename.indexOf('html') > 0) {
+            if (filename.indexOf("html") > 0) {
                 newList.unshift(filename)
-            } else if (filename.indexOf('css') > 0) {
+            } else if (filename.indexOf("css") > 0) {
                 newList.push(filename)
-            } else if (filename.indexOf('js') > 0) {
+            } else if (filename.indexOf("js") > 0) {
                 newList.push(filename)
             } else {
                 newList.push(filename)
@@ -244,8 +378,11 @@ function EditorManager (selectedEditor) {
         }
         for (let i = 0; i < newList.length; i++) {
             const filename = newList[i];
-            var fileType = getFileSuffix(filename) || 'file';
-            addFileLayout(filename, fileType);
+            if (allFile[filename] && allFile[filename].hidden != 1) {
+                var fileType = getFileSuffix(filename) || "file",
+                    fileValue = allCode[filename].value;
+                addFileLayout(filename, fileType, fileValue);
+            }
         }
     }
 
@@ -268,12 +405,12 @@ function EditorManager (selectedEditor) {
     // 删除变更提示点
     function removeNotice () {
         saveCtrl.classList.remove("notice");;
-        selectedEditor.target.classList.remove("notice");
+        selectedEditor.active.classList.remove("notice");
     }
 
     // 添加变更提示点
     function addNotice () {
-        selectedEditor.target.classList.add("notice");
+        selectedEditor.active.classList.add("notice");
         saveCtrlElement.classList.add("notice");
     }
 
@@ -288,12 +425,10 @@ function EditorManager (selectedEditor) {
                 return
             }
         }
-        // saveCode({ css: editorCSS, js: editorJS, html: editorHTML });
         document.body.appendChild(output);
         output.className = "output";
         output.frameBorder = 0;
         const frame = output.contentDocument;
-        console.log(output);
         const newFrame = frame.open();
         const erudaScript = document.createElement("script");
         const erudaInit = document.createElement("script");
@@ -315,6 +450,9 @@ function EditorManager (selectedEditor) {
                 if (!element.type) continue;
                 const fileType = element.type.toLowerCase();
                 const fileValue = element.value
+                if (!fileValue || typeof fileValue !== "string" || fileValue == "") {
+                    continue;
+                }
                 switch (fileType) {
                     case "css":
                         newFrame.head.innerHTML += `<style>${fileValue}</style>`;
@@ -326,7 +464,7 @@ function EditorManager (selectedEditor) {
                         newFrame.write(`<script>${fileValue}<\/script>`);
                         break;
                     default:
-                        console.log("error file type!");
+                        console.error("error file type!");
                         break;
                 }
             }
@@ -336,39 +474,66 @@ function EditorManager (selectedEditor) {
 
     // 更新文件标题
     function updateTitle (type, fileName) {
-        var tilteText = document.getElementById("tilte-text")
+        var tilteText = document.getElementById("title-text")
         tilteText.dataset["subtext"] = type || "";
         tilteText.innerHTML = fileName;
         saveCtrlElement.dataset["file"] = fileName;
     }
 
-    // 切换tab的文件
-    function changeEditor (fileName, id) {
-        const output = document.querySelector(".output");
-        selectedEditor.off("focus", updateFocus);
-        if (output) output.style.visibility = "hidden";
-
-        var file = allCodeTmp[fileName]
-        var oldfile = allCode[fileName];
+    // 更新SelectEditor
+    function updateSelectEditor (activeFileItem, fileName, fileType, fileValue) {
+        if (!fileName || fileName == "") {
+            fileName = ""
+            fileType = null
+            fileValue = ""
+        } else {
+            // 补充代码
+            if (!fileType || fileType == "") {
+                fileType = getFileSuffix(fileName) || "file"
+                var file = allCode[fileName];
+                if (!file || !file.value) {
+                    console.error("updateSelectEditor error!", fileName)
+                    return
+                }
+                fileValue = file.value;
+            }
+        }
         // update view
-        var fileValue = file.value, fileType = file.type;
+        updateTitle(fileType, fileName);
+        // update selectedEditor
+        if (fileType && fileType != "") {
+            selectedEditor.session.setMode(`ace/mode/${fileType}`)
+        }
+        lastValue = fileValue;
+        // update activeFileItem
+        updateActiveFile(activeFileItem)
         selectedEditor.fileName = fileName;
         selectedEditor.fileType = fileType;
-        updateTitle(fileType, fileName);
-
-        // active file view
-        activeFile = document.querySelector(".active")
-        selectedEditor.target = activeFile;
-
-        // update selectedEditor
-        selectedEditor.session.setMode(`ace/mode/${fileType}`)
         selectedEditor.session.setValue(fileValue);
-        selectedEditor.selection.cursor.setPosition(1);
+        selectedEditor.selection.cursor.setPosition(0);
+    }
+
+    // 切换tab的文件
+    function changeEditor (activeFileItem, fileName) {
+        selectedEditor.off("focus", updateFocus);
+        const output = document.querySelector(".output");
+        if (output) output.style.visibility = "hidden";
+
+        // 获取暂存代码文件
+        var file = allCodeTmp[fileName]
+        // 获取最近的已保存的文件
+        var oldfile = allCode[fileName];
+
+        // 更新SelectEditor
+        updateSelectEditor(activeFileItem, fileName, file.type, file.value)
+
         // 检测是否变化
-        isChanged = checkChanged(fileValue, oldfile.value);
+        isChanged = checkChanged(oldfile.value, file.value);
+        if (!isChanged) {
+            selectedEditor.getSession().getUndoManager().reset();
+        }
         lastValue = oldfile.value;
         // 清理undo
-        selectedEditor.getSession().getUndoManager().reset();
         selectedEditor.on("focus", updateFocus);
         window.selectedEditor = selectedEditor;
     }
@@ -378,8 +543,8 @@ function EditorManager (selectedEditor) {
         var blob = _dataURLToBlob(dataURL);
         saveFile(blob, filename);
         function _dataURLToBlob (dataURL) {
-            var parts = dataURL.split(';base64,');
-            var contentType = parts[0].split(':')[1];
+            var parts = dataURL.split(";base64,");
+            var contentType = parts[0].split(":")[1];
             var raw = window.atob(parts[1]);
             var rawLength = raw.length;
             var uInt8Array = new Uint8Array(rawLength);
@@ -395,10 +560,10 @@ function EditorManager (selectedEditor) {
     // 保存文件
     function saveFile (data, filename) {
         var url = window.URL.createObjectURL(data);
-        var a = document.createElement('a');
+        var a = document.createElement("a");
         a.href = url;
         a.download = filename;
-        a.style.display = 'none';
+        a.style.display = "none";
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -409,31 +574,31 @@ function EditorManager (selectedEditor) {
         return new Promise((resolve, reject) => {
             let mimeType;
             if (!extension) {
-                extension = 'png';
-                mimeType = 'image/png';
+                extension = "png";
+                mimeType = "image/png";
             } else {
                 switch (extension.toLowerCase()) {
-                    case 'png':
-                        mimeType = 'image/png';
+                    case "png":
+                        mimeType = "image/png";
                         break;
-                    case 'jpeg': case 'jpg':
-                        mimeType = 'image/jpeg';
+                    case "jpeg": case "jpg":
+                        mimeType = "image/jpeg";
                         break;
                     default:
-                        mimeType = 'image/png';
+                        mimeType = "image/png";
                         break;
                 }
             }
             // file or remote URL. url can also be dataURL, but giving it a file path is much faster
             var url = canvas.toDataURL(mimeType, encoderOptions);
-            var album = 'p5Art';
+            var album = "p5Art";
             cordova.plugins.photoLibrary.saveImage(url, album,
-                (libraryItem) => {
-                    console.log("saveImage", libraryItem)
+                (res) => {
+                    console.log("saveImage", res)
                     resolve("ok");
                 },
                 (err) => {
-                    console.log("saveImage err", err)
+                    console.error("saveImage err", err)
                     reject(err)
                 }
             );

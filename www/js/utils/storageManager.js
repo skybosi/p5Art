@@ -82,7 +82,7 @@
         return true;
     }
 
-    function clearCode() {
+    function clearCode () {
         localStorage.clear();
     }
 
@@ -93,6 +93,29 @@
             CODE_VALUE_KEY,
             JSON.stringify(code_tb)
         );
+        return code_tb
+    }
+
+    function removeCode (fileName) {
+        var code_tb = getCode();
+        delete code_tb[fileName];
+        localStorage.setItem(
+            CODE_VALUE_KEY,
+            JSON.stringify(code_tb)
+        );
+        return code_tb
+    }
+
+    function hiddenCode (fileName) {
+        var code_tb = getCode();
+        if (code_tb[fileName]) {
+            code_tb[fileName].hidden = 1; // 0 显示 1 隐藏
+        }
+        localStorage.setItem(
+            CODE_VALUE_KEY,
+            JSON.stringify(code_tb)
+        );
+        return code_tb
     }
 
     function getCode (fileName) {
@@ -125,7 +148,7 @@
             }
         }
         const { css, js, js2, html } = defaultValue;
-        console.log("code", css, js, html);
+        // console.log("code", css, js, html);
         saveCode("index.css", "css", css);
         saveCode("sketch.js", "javascript", js);
         saveCode("index.html", "html", html);
@@ -135,6 +158,8 @@
     window.getCodeType = getCodeType;
     window.getCodeValue = getCodeValue;
     window.saveCode = saveCode;
+    window.removeCode = removeCode;
+    window.hiddenCode = hiddenCode;
     window.saveEditorCode = saveEditorCode;
     window.loadInitialCode = loadInitialCode;
 })();

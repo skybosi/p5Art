@@ -179,7 +179,6 @@ function TextControl (editor, container) {
     function handleLongTap () {
         clearTimeout(longTouchTimer);
         longTouchTimer = null;
-        console.log("handleLongTap", position)
         contextmenu(position.x, position.y);
     }
 }

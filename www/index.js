@@ -2,7 +2,7 @@
     try {
         await aceLoaded();
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
 
     function loadAce () {
@@ -22,7 +22,7 @@
                 theme: "ace/theme/monokai",
                 useSoftTabs: false,
             });
-            console.log(editor)
+            // console.log(editor)
             LoadAutoComplete();
             editor.commands.removeCommand("showSettingsMenu");
             editor.setShowPrintMargin(false);
@@ -41,25 +41,25 @@
                 isFocused = false;
             }
         }
-        selectedEditor.session.setValue(getCodeValue(defaultFile), 1);
+        // selectedEditor.session.setValue(getCodeValue(defaultFile), 1);
         // 清理undo
-        selectedEditor.getSession().getUndoManager().reset();
-        selectedEditor.fileName = defaultFile;
-        selectedEditor.fileType = "javascript";
+        // selectedEditor.getSession().getUndoManager().reset();
+        // selectedEditor.fileName = defaultFile;
+        // selectedEditor.fileType = "javascript";
         window.selectedEditor = selectedEditor;
 
-        ace.config.loadModule("ace/snippets/snippets", function () {
-            const snippetManager = ace.require("ace/snippets").snippetManager;
-            document.body.onclick = function () {
-                ace.config.loadModule("ace/snippets/javascript", function (m) {
-                    if (m) {
-                        m.snippets.push(...snippets);
-                        snippetManager.register(m.snippets, m.scope);
-                    }
-                });
-                document.body.onclick = null;
-            };
-        });
+        // ace.config.loadModule("ace/snippets/snippets", function () {
+        //     const snippetManager = ace.require("ace/snippets").snippetManager;
+        //     document.body.onclick = function () {
+        //         ace.config.loadModule("ace/snippets/javascript", function (m) {
+        //             if (m) {
+        //                 m.snippets.push(...snippets);
+        //                 snippetManager.register(m.snippets, m.scope);
+        //             }
+        //         });
+        //         document.body.onclick = null;
+        //     };
+        // });
 
         // 拾色器
         PickerView(selectedEditor);
